@@ -6,6 +6,9 @@ import SplashScreen from 'react-native-splash-screen';
 import {useGetUserByDeviceIdQuery} from './store/services/service';
 import {getUniqueId} from 'react-native-device-info';
 import {ActivityIndicator} from 'react-native';
+import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
+import * as eva from '@eva-design/eva';
 
 const Index = () => {
   const {isSuccess} = useGetUserByDeviceIdQuery(getUniqueId());
@@ -28,7 +31,10 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <Index />
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <Index />
+      </ApplicationProvider>
     </Provider>
   );
 };

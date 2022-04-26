@@ -4,12 +4,13 @@ import {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 
-interface User {
+export interface User {
   id: number;
   name: string;
   DeviceId: string;
 }
-interface Task {
+export interface Task {
+  id: number;
   title: null | string;
   description: null | string;
   date: null | Date;

@@ -3,11 +3,13 @@ import {
   createNavigationContainerRef,
   NavigationContainer,
 } from '@react-navigation/native';
+import {View, Text} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {HomeScreen, RegisterScreen, DetailsScreen} from '../screens';
 import {useSelector} from 'react-redux';
 import {userApi} from '../store/services/service';
 import {getUniqueId} from 'react-native-device-info';
+import {HeaderBackground} from './styles';
 
 const Stack = createNativeStackNavigator();
 const navigationContainerRef = createNavigationContainerRef();
@@ -26,7 +28,21 @@ const Navigation = () => {
             ? 'Home'
             : 'Register'
         }>
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          // options={{
+          //   headerBackground: () => (
+          //     <HeaderBackground>
+          //       <Text>ads</Text>
+          //     </HeaderBackground>
+          //   ),
+          //   headerStyle: {
+          //     backgroundColor: '#f4511e',
+          //   },
+          //   headerLargeTitle: true,
+          // }}
+        />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Details" component={DetailsScreen} />
       </Stack.Navigator>
