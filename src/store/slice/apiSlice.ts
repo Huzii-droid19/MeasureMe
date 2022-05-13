@@ -3,21 +3,7 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
-
-export interface User {
-  id: number;
-  name: string;
-  DeviceId: string;
-}
-export interface Task {
-  id: number;
-  title: null | string;
-  description: null | string;
-  date: null | Date;
-  type: null | number;
-  status: null | number;
-  userId: null | number;
-}
+import {User, Task} from '../../types';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -28,17 +14,17 @@ export const userApi = createApi({
     getUserByDeviceId: builder.query<User, string>({
       query: deviceId => `users?DeviceId=${deviceId}`,
     }),
-    getTasks: builder.query<Task, string>({
+    getTasks: builder.query<Task[], string>({
       async queryFn(_arg, _queryApi, _extraOptioins, fetchWithBQ) {
-        const {data: user, error} = await fetchWithBQ(`users?DeviceId=${_arg}`);
+        const {data, error}: {data: User[]; error: FetchBaseQueryError} =
+          await fetchWithBQ(`users?DeviceId=${_arg}`);
         if (error) {
-          throw error;
+          return {error: error as FetchBaseQueryError};
         }
-        const taskOwner = user.slice(0, 1)[0] as User;
-
+        const taskOwner = data.slice(0, 1)[0] as User;
         const result = await fetchWithBQ(`users/${taskOwner.id}/Task`);
         return result.data
-          ? {data: result.data as Task}
+          ? {data: result.data as Task[]}
           : {error: result.error as FetchBaseQueryError};
       },
     }),
