@@ -1,14 +1,14 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {Container, Error, Info, Label, InputContainer} from './styles';
 
 const Details = ({navigation, route}: NativeStackScreenProps<any>) => {
   return (
     <ScreenWrapper>
-      <View>
-        <Text>Details</Text>
-      </View>
+      <Container>
+        <Label category="label">Deta</Label>
+      </Container>
     </ScreenWrapper>
   );
 };

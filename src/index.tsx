@@ -10,9 +10,12 @@ import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
 import {Loader} from './components';
+import CustomTheme from './assets/theme/custom-theme.json';
 
 const Index = () => {
-  const {isSuccess, isError, error} = useGetUserByDeviceIdQuery(getUniqueId());
+  const {isSuccess, isError, error, data} = useGetUserByDeviceIdQuery(
+    getUniqueId(),
+  );
   const [route, setRoute] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -20,7 +23,7 @@ const Index = () => {
       setRoute('Home');
       setIsLoading(false);
     }
-    if (isError && error.status === 404) {
+    if (isSuccess && Object.keys(data).length === 0) {
       setRoute('Register');
       setIsLoading(false);
     }
@@ -42,7 +45,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider {...eva} theme={theme}>
+      <ApplicationProvider {...eva} theme={{...theme, ...CustomTheme}}>
         <Index />
       </ApplicationProvider>
     </Provider>

@@ -21,38 +21,43 @@ import {
   TaskList,
   FloatingButton,
 } from './styles';
-import {ItemView, Loader, AddNewTask} from '../../components';
-import {Colors} from '../../constants/colors';
+import {ItemView, Loader, EmptyListComponent} from '../../components';
 import {Task} from '../../types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTheme} from '@ui-kitten/components';
+import moment from 'moment';
 
 const Home = ({navigation}: NativeStackScreenProps<any>) => {
-  const {data, isSuccess, refetch} = useGetTasksQuery(getUniqueId());
-  const [date, setDate] = useState(new Date());
-  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const {
+    data: tasks,
+    isSuccess,
+    refetch,
+    isError,
+    error,
+  } = useGetTasksQuery(getUniqueId());
+  const [currentDate, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [search, setSearch] = useState('');
   const [isSearchingVisible, setIsSearchingVisible] = useState(false);
-  const NewTaskAnimatedValue = useRef(new Animated.Value(100)).current;
   const CalendarAnimatedValue = useRef(new Animated.Value(-500)).current;
   const theme = useTheme();
+  const markDates = {} as any;
+  tasks?.forEach((task: Task) => {
+    markDates[moment(task.date).format('YYYY-MM-DD')] = {
+      marked: true,
+      dotColor: theme['color-primary-700'],
+    };
+  });
 
   const animateCalendar = () => {
     setIsCalendarVisible(!isCalendarVisible);
     Animated.timing(CalendarAnimatedValue, {
       toValue: isCalendarVisible ? 80 : -500,
-      duration: 300,
+      duration: 600,
       useNativeDriver: true,
     }).start();
   };
-  const animateNewTaskComponent = () => {
-    Animated.timing(NewTaskAnimatedValue, {
-      toValue: 0,
-      duration: 1000,
 
-      useNativeDriver: true,
-    }).start();
-  };
   const renderItemCall = ({item}: {item: Task}) => {
     return (
       <ItemView
@@ -61,12 +66,17 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
       />
     );
   };
+  const renderEmptyList = () => <EmptyListComponent />;
 
   return (
     <ScreenWrapper>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.header} />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={theme['color-header']}
+      />
+
       <Container>
-        <Header>
+        <Header theme={theme['color-header']}>
           {isSearchingVisible ? (
             <>
               <InputField
@@ -90,14 +100,16 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
           ) : (
             <>
               <MonthView onPress={animateCalendar}>
-                <Month>April</Month>
+                <Month>{moment(currentDate).format('MMMM-DD')}</Month>
                 <StyledIcon
                   name="calendar-outline"
                   fill={theme['color-primary-default']}
                 />
               </MonthView>
               <TouchableOpacity
-                onPress={() => setIsSearchingVisible(!isSearchingVisible)}>
+                onPress={() => {
+                  setIsSearchingVisible(!isSearchingVisible);
+                }}>
                 <StyledIcon
                   name="search-outline"
                   fill={theme['color-primary-default']}
@@ -109,34 +121,43 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
 
         <CalendarView translateY={CalendarAnimatedValue}>
           <TaskCalendar
-            date={date}
-            onSelect={(nextDate: React.SetStateAction<Date>) =>
-              setDate(nextDate)
-            }
+            enableSwipeMonths={true}
+            current={moment(currentDate).format('YYYY-MM-DD')}
+            onDayPress={(day: any) => {
+              setDate(day.dateString);
+              animateCalendar();
+            }}
+            markedDates={{
+              ...markDates,
+              [moment(currentDate).format('YYYY-MM-DD')]: {
+                selected: true,
+              },
+            }}
+            theme={{calendarBackground: theme['color-header']}}
           />
         </CalendarView>
 
         {isSuccess ? (
           <TaskList
-            data={data}
+            data={tasks}
             ItemSeparatorComponent={ItemSeparator}
             renderItem={renderItemCall}
             keyExtractor={(item: Task) => item.id.toString()}
             refreshControl={
               <RefreshControl refreshing={!isSuccess} onRefresh={refetch} />
             }
+            ListEmptyComponent={renderEmptyList}
           />
         ) : (
           <Loader />
         )}
       </Container>
       <FloatingButton
-        onPress={animateNewTaskComponent}
+        onPress={() => navigation.navigate('NewTask')}
         accessoryLeft={(props: any) => (
           <StyledIcon {...props} name="plus-outline" />
         )}
       />
-      {<AddNewTask translateY={NewTaskAnimatedValue} />}
     </ScreenWrapper>
   );
 };

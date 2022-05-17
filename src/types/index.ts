@@ -1,6 +1,7 @@
 export interface User {
   id: number;
   name: string;
+  email: string;
   DeviceId: string;
 }
 export interface Task {
@@ -8,6 +9,16 @@ export interface Task {
   title: string;
   description: string;
   date: Date;
-  isCompleted: Boolean;
+  isCompleted: boolean;
   userId: number;
+}
+export interface TaskForm {
+  title: string;
+  description: string;
+  date: Date;
+  isCompleted: Boolean;
+}
+export interface RegisterForm {
+  email: string;
+  name: string;
 }

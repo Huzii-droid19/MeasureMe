@@ -1,17 +1,17 @@
 import styled from 'styled-components/native';
-import {Button, Text, Layout} from '@ui-kitten/components';
+import {Layout, Text} from '@ui-kitten/components';
 
 export const Container = styled(Layout)`
   flex: 1;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 `;
 export const Label = styled(Text)`
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
+  margin-top: 10px;
   margin-bottom: 20px;
+  font-size: 25px;
+  font-weight: bold;
 `;
 export const InputContainer = styled(Layout)`
   flex-direction: column;
@@ -21,11 +21,8 @@ export const InputContainer = styled(Layout)`
 `;
 export const Error = styled(Text)`
   font-size: 12px;
-  font-weight: 400;
-`;
-export const SubmitButton = styled(Button)`
-  width: 50%;
-  margin-top: 20px;
+  font-weight: 600;
+  color: red;
 `;
 export const Info = styled(Layout)`
   margin-top: 20px;

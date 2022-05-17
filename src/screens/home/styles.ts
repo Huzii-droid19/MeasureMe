@@ -1,8 +1,9 @@
 import styled from 'styled-components/native';
 import {Dimensions} from 'react-native';
-import {Colors} from '../../constants/colors';
 import {Animated} from 'react-native';
-import {Input, Calendar, Icon, Layout, Button} from '@ui-kitten/components';
+import {Input, Icon, Layout, Button, Text} from '@ui-kitten/components';
+import {Calendar} from 'react-native-calendars';
+import {TouchableOpacity, FlatList} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -19,22 +20,23 @@ export const Header = styled(Layout)`
   width: ${width}px;
   height: ${height * 0.1}px;
   elevation: 5;
-  background-color: ${Colors.header};
+  background-color: ${({theme}: {theme: string}) => theme};
 `;
-export const MonthView = styled.TouchableOpacity`
-  flex: 0.4;
+export const MonthView = styled(TouchableOpacity)`
+  flex: 0.5;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding-horizontal: 4px;
-  width: 35%;
-  height: 100%;
+  margin: 5px;
+  height: 90%;
+  border-radius: 10px;
 `;
-export const Month = styled.Text`
+export const Month = styled(Text)`
   font-size: 20px;
-  font-weight: bold;
-  color: #1b1a17;
+  font-weight: 700;
   text-align: center;
+  margin-right: 10px;
 `;
 export const CalendarView = styled(Animated.View)`
   flex-direction: row;
@@ -59,13 +61,13 @@ export const InputField = styled(Input)`
 
 export const TaskCalendar = styled(Calendar)`
   width: ${width}px;
-  background-color: ${Colors.header};
+  z-index: 1;
 `;
 export const ItemSeparator = styled(Layout)`
   height: 10px;
   width: ${width}px;
 `;
-export const TaskList = styled.FlatList`
+export const TaskList = styled(FlatList)`
   margin-top: 10px;
   margin-bottom: 20px;
 `;

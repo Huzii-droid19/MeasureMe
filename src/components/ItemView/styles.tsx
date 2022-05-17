@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import {Dimensions} from 'react-native';
 import {Layout, Text, CheckBox} from '@ui-kitten/components';
 import {TouchableOpacity} from 'react-native';
 
@@ -24,7 +23,7 @@ export const TextContainer = styled(TouchableOpacity)`
 export const Title = styled(Text)`
   font-size: 16px;
   font-weight: bold;
-  margin-left: 5px;
+  margin-left: 10px;
 `;
 
 export const Description = styled(Text)`

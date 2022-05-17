@@ -8,9 +8,12 @@ import {
   CustomCheckBox,
 } from './styles';
 import {Task} from '../../types';
+import moment from 'moment';
 
 const ItemView = ({item, onPress}: {item: Task; onPress: any}) => {
-  const [isCompleted, setIsCompleted] = React.useState(item.isCompleted);
+  const [isCompleted, setIsCompleted] = React.useState<boolean>(
+    item.isCompleted,
+  );
   return (
     <Container>
       <CustomCheckBox
@@ -26,7 +29,7 @@ const ItemView = ({item, onPress}: {item: Task; onPress: any}) => {
           {item.description.slice(0, 30) +
             (item.description.length > 30 ? '...' : '')}
         </Description>
-        <Date>{item.date}</Date>
+        <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>
     </Container>
   );
