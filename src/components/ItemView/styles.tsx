@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Layout, Text, CheckBox} from '@ui-kitten/components';
+import {Layout, Text, CheckBox, Icon} from '@ui-kitten/components';
 import {TouchableOpacity} from 'react-native';
 
 export const Container = styled(Layout)`
@@ -37,3 +37,9 @@ export const Date = styled(Text)`
 export const CustomCheckBox = styled(CheckBox)`
   border-radius: 10px;
 `;
+export const StyledIcon = styled(Icon)`
+  height: 25px;
+  width: 25px;
+  margin-right: 10px;
+`;
+export const IconWrapper = styled(TouchableOpacity)``;

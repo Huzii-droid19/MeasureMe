@@ -63,6 +63,7 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
       <ItemView
         item={item}
         onPress={() => navigation.navigate('Details', {item})}
+        theme={theme['color-primary-500']}
       />
     );
   };

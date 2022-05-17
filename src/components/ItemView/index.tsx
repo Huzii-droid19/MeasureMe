@@ -6,11 +6,19 @@ import {
   TextContainer,
   Date,
   CustomCheckBox,
+  StyledIcon,
+  IconWrapper,
 } from './styles';
 import {Task} from '../../types';
 import moment from 'moment';
 
-const ItemView = ({item, onPress}: {item: Task; onPress: any}) => {
+interface ItemViewProps {
+  item: Task;
+  onPress: () => void;
+  theme: string;
+}
+
+const ItemView = ({item, onPress, theme}: ItemViewProps) => {
   const [isCompleted, setIsCompleted] = React.useState<boolean>(
     item.isCompleted,
   );
@@ -31,6 +39,9 @@ const ItemView = ({item, onPress}: {item: Task; onPress: any}) => {
         </Description>
         <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>
+      <IconWrapper>
+        <StyledIcon name="more-vertical" fill={theme} />
+      </IconWrapper>
     </Container>
   );
 };
