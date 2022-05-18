@@ -42,6 +42,15 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
       <IconWrapper>
         <StyledIcon name="more-vertical" fill={theme} />
       </IconWrapper>
+      {/* <Menu
+        visible={visible}
+        onSelect={onItemSelect}
+        onBackdropPress={() => setVisible(false)}
+        selectedIndex={selectedIndex}
+        anchor={renderIcon}
+        menuItems={[{title: 'Edit'}, {title: 'Delete'}]}
+        placement="left"
+      /> */}
     </Container>
   );
 };
