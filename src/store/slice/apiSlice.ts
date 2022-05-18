@@ -68,6 +68,21 @@ export const userApi = createApi({
       },
       invalidatesTags: ['Task'],
     }),
+    editTask: builder.mutation<Task, Task>({
+      query: task => ({
+        url: `users/${task.userId}/Task/${task.id}`,
+        method: 'PUT',
+        body: task,
+      }),
+      invalidatesTags: ['Task'],
+    }),
+    deleteTask: builder.mutation<void, Task>({
+      query: task => ({
+        url: `users/${task.userId}/Task/${task.id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Task'],
+    }),
     addUser: builder.mutation<User, Object>({
       query: user => ({
         url: 'users',
@@ -83,4 +98,6 @@ export const {
   useGetUserByDeviceIdQuery,
   useAddTaskMutation,
   useAddUserMutation,
+  useEditTaskMutation,
+  useDeleteTaskMutation,
 } = userApi;

@@ -70,12 +70,9 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
   const renderEmptyList = () => <EmptyListComponent />;
 
   return (
-    <ScreenWrapper>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={theme['color-header']}
-      />
-
+    <ScreenWrapper
+      statusBarColor={theme['color-header']}
+      barStyle="dark-content">
       <Container>
         <Header theme={theme['color-header']}>
           {isSearchingVisible ? (

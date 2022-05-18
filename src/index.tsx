@@ -11,6 +11,7 @@ import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
 import {Loader} from './components';
 import CustomTheme from './assets/theme/custom-theme.json';
+import {useTheme} from 'styled-components';
 
 const Index = () => {
   const {isSuccess, isError, error, data} = useGetUserByDeviceIdQuery(
