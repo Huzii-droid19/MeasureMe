@@ -41,7 +41,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       <IconWrapper>
         <StyledIcon name="trash-2-outline" fill={theme['color-danger-500']} />
       </IconWrapper>
-      <IconWrapper>
+      <IconWrapper onPress={() => navigation.navigate('Edit', {item: item})}>
         <StyledIcon name="edit-2-outline" fill={theme['color-primary-500']} />
       </IconWrapper>
     </>

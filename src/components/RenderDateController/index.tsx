@@ -1,5 +1,6 @@
 import React from 'react';
 import {Controller, UseFormGetValues, UseFormSetValue} from 'react-hook-form';
+import {Keyboard} from 'react-native';
 import {TaskForm} from '../../types';
 import {StyledDatePicker, InputLabel} from './styles';
 
@@ -28,6 +29,9 @@ const index = ({
             setValue('date', date, {shouldValidate: true})
           }
           onBlur={onBlur}
+          onFocus={() => {
+            Keyboard.dismiss();
+          }}
           min={new Date()}
         />
       )}
