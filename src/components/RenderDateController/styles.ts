@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import {Datepicker, Text} from '@ui-kitten/components';
 
 export const StyledDatePicker = styled(Datepicker)`

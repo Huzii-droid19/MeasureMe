@@ -9,6 +9,7 @@ import {
   RegisterScreen,
   DetailsScreen,
   NewTaskScreen,
+  EditTaskScreen,
 } from '../screens';
 import {useTheme} from '@ui-kitten/components';
 
@@ -38,6 +39,7 @@ const Navigation = ({route}: {route: string}) => {
           options={options}
         />
         <Stack.Screen name="NewTask" component={NewTaskScreen} />
+        <Stack.Screen name="Edit" component={EditTaskScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
