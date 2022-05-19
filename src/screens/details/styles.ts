@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import {Layout, Text, Button, Icon} from '@ui-kitten/components';
+import styled from 'styled-components/native';
+import {Layout, Text, Icon} from '@ui-kitten/components';
 import {TouchableOpacity} from 'react-native';
 
 export const Container = styled(Layout)`
@@ -51,9 +51,6 @@ export const UndoText = styled(Text)`
   font-weight: 700;
   margin-top: 30px;
   text-align: justify;
-`;
-export const UndoButton = styled(Button)`
-  margin-top: 10px;
 `;
 export const IconWrapper = styled(TouchableOpacity)`
   margin-left: 20px;

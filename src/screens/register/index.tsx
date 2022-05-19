@@ -68,6 +68,8 @@ const Register = ({navigation}: NativeStackScreenProps<any>) => {
           onPress={handleSubmit(onSubmit)}
           isLoading={isLoading}
           disabled={!isValid}
+          status="primary"
+          appearance="filled"
         />
         <Info>{isError && <Error>{error}</Error>}</Info>
       </Container>

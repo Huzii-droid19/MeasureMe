@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Layout, Text, CheckBox, Icon} from '@ui-kitten/components';
+import {Layout, Text, Icon} from '@ui-kitten/components';
 import {TouchableOpacity} from 'react-native';
 
 export const Container = styled(Layout)`
@@ -17,15 +17,13 @@ export const TextContainer = styled(TouchableOpacity)`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  margin-left: 20px;
+  margin-left: 10px;
 `;
-
 export const Title = styled(Text)`
   font-size: 16px;
   font-weight: bold;
   margin-left: 10px;
 `;
-
 export const Description = styled(Text)`
   font-size: 16px;
   margin-left: 10px;
@@ -33,9 +31,6 @@ export const Description = styled(Text)`
 export const Date = styled(Text)`
   font-size: 10px;
   margin-left: 10px;
-`;
-export const CustomCheckBox = styled(CheckBox)`
-  border-radius: 10px;
 `;
 export const StyledIcon = styled(Icon)`
   height: 25px;
