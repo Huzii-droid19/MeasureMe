@@ -2,17 +2,26 @@ import React from 'react';
 import {Controller} from 'react-hook-form';
 import {StyledInput, InputLabel} from './styles';
 
-interface InputControllerProps {
+type InputControllerProps = {
   label: string;
   inputControl: any;
-}
+  multiline?: boolean;
+  minHeight?: number;
+};
 
-const RenderController = ({label, inputControl}: InputControllerProps) => {
+const RenderController = ({
+  label,
+  inputControl,
+  multiline,
+  minHeight,
+}: InputControllerProps) => {
   return (
     <Controller
       control={inputControl}
       render={({field: {onChange, onBlur, value}}) => (
         <StyledInput
+          textStyle={multiline ? {minHeight: minHeight} : {}}
+          multiline={multiline}
           label={() => {
             return <InputLabel>{label}</InputLabel>;
           }}

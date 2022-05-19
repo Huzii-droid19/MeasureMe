@@ -1,10 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {
-  StatusBar,
-  TouchableOpacity,
-  Animated,
-  RefreshControl,
-} from 'react-native';
+import {TouchableOpacity, Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {useGetTasksQuery} from '../../store/slice/apiSlice';
 import {getUniqueId} from 'react-native-device-info';
@@ -63,7 +58,8 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
       <ItemView
         item={item}
         onPress={() => navigation.navigate('Details', {item})}
-        theme={theme['color-primary-500']}
+        theme={theme}
+        navigation={navigation}
       />
     );
   };

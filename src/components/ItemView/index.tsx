@@ -5,32 +5,30 @@ import {
   Title,
   TextContainer,
   Date,
-  CustomCheckBox,
   StyledIcon,
   IconWrapper,
 } from './styles';
 import {Task} from '../../types';
 import moment from 'moment';
-
-interface ItemViewProps {
+import {NavigationProp} from '@react-navigation/native';
+import DeleteModal from '../DeleteModal';
+type ItemViewProps = {
   item: Task;
   onPress: () => void;
-  theme: string;
-}
+  theme: any;
+  navigation: NavigationProp<any>;
+};
 
-const ItemView = ({item, onPress, theme}: ItemViewProps) => {
-  const [isCompleted, setIsCompleted] = React.useState<boolean>(
-    item.isCompleted,
-  );
+const ItemView = ({item, onPress, theme, navigation}: ItemViewProps) => {
+  const [visible, setVisible] = React.useState(false);
+  const onClose = () => {
+    setVisible(!visible);
+  };
+  const backdropStyle = {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  };
   return (
     <Container>
-      <CustomCheckBox
-        status="primary"
-        checked={isCompleted}
-        onChange={() => {
-          setIsCompleted(!isCompleted);
-        }}
-      />
       <TextContainer onPress={onPress}>
         <Title>{item.title}</Title>
         <Description>
@@ -39,18 +37,26 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
         </Description>
         <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>
-      <IconWrapper>
-        <StyledIcon name="more-vertical" fill={theme} />
-      </IconWrapper>
-      {/* <Menu
+      <>
+        <IconWrapper onPress={() => navigation.navigate('Edit', {item: item})}>
+          <StyledIcon name="edit-outline" fill={theme['color-primary-500']} />
+        </IconWrapper>
+        <IconWrapper>
+          <StyledIcon
+            name="trash-2-outline"
+            fill={theme['color-danger-500']}
+            onPress={() => setVisible(!visible)}
+          />
+        </IconWrapper>
+      </>
+      <DeleteModal
         visible={visible}
-        onSelect={onItemSelect}
-        onBackdropPress={() => setVisible(false)}
-        selectedIndex={selectedIndex}
-        anchor={renderIcon}
-        menuItems={[{title: 'Edit'}, {title: 'Delete'}]}
-        placement="left"
-      /> */}
+        onClose={onClose}
+        backdropStyle={backdropStyle}
+        onBackdropPress={onClose}
+        task={item}
+        navigation={navigation}
+      />
     </Container>
   );
 };

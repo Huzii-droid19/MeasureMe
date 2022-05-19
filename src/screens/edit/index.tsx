@@ -9,9 +9,10 @@ import {
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {TaskForm} from '../../types';
-import {Task} from '../../types';
+import {TaskForm, Task} from '../../types';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {useTheme} from '@ui-kitten/components';
+import {useEditTaskMutation} from '../../store/slice/apiSlice';
 
 type EditScreenProps = {
   route: RouteProp<{params: {item: Task}}, 'params'>;
@@ -24,23 +25,22 @@ const EditTask = ({navigation, route}: EditScreenProps) => {
     title: yup
       .string()
       .required()
-      .test('isTitleEdit', '', value => {
-        if (value === item.title) {
-          return true;
-        }
-        return false;
+
+      .test('is-title', 'Title is not updated', value => {
+        return value !== item.title;
       }),
     description: yup
       .string()
       .required()
-      .test('isDescriptionEdit', '', value => {
-        if (value === item.description) {
-          return true;
-        }
-        return false;
+      .test('is-description', 'Description is not updated', value => {
+        return value !== item.description;
       }),
-    date: yup.date().required(),
-    isCompleted: yup.boolean().required(),
+    date: yup
+      .date()
+      .required()
+      .test('is-date', 'Date is not updated', value => {
+        return value?.toDateString() !== new Date(item.date).toDateString();
+      }),
   });
   const {
     control,
@@ -59,19 +59,41 @@ const EditTask = ({navigation, route}: EditScreenProps) => {
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
+  const [editTask, {isLoading, isSuccess, isError, error}] =
+    useEditTaskMutation();
 
-  const onSubmit = ({title, description, date, isCompleted}: TaskForm) => {
-    navigation.goBack();
+  const onSubmit = ({title, description, date}: TaskForm) => {
+    editTask({
+      id: item.id,
+      title,
+      description,
+      date,
+      isCompleted: false,
+      userId: item.userId,
+    });
     reset();
   }; // function to call when user submit the form
+  React.useEffect(() => {
+    if (isSuccess) {
+      navigation.navigate('Home');
+    }
+  }, [isSuccess]);
+  const theme = useTheme();
   return (
-    <ScreenWrapper>
+    <ScreenWrapper
+      barStyle="dark-content"
+      statusBarColor={theme['background-basic-color-1']}>
       <Container>
         <Label>Edit Task</Label>
         <InputContainer>
           <RenderInputController label="Title" inputControl={control} />
           {errors.title && <Error>{errors.title.message}</Error>}
-          <RenderInputController label="Description" inputControl={control} />
+          <RenderInputController
+            label="Description"
+            inputControl={control}
+            multiline={true}
+            minHeight={64}
+          />
           {errors.description && <Error>{errors.description.message}</Error>}
           <RenderDateController
             label="Deadline"
@@ -84,9 +106,12 @@ const EditTask = ({navigation, route}: EditScreenProps) => {
         <LoadingButton
           label="Edit Task"
           onPress={handleSubmit(onSubmit)}
-          isLoading={false}
-          disabled={isValid}
+          isLoading={isLoading}
+          disabled={!isValid}
+          status="primary"
+          appearance="filled"
         />
+        <Info>{isError && <Error>{error}</Error>}</Info>
       </Container>
     </ScreenWrapper>
   );

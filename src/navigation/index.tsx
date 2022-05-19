@@ -38,8 +38,16 @@ const Navigation = ({route}: {route: string}) => {
           component={DetailsScreen}
           options={options}
         />
-        <Stack.Screen name="NewTask" component={NewTaskScreen} />
-        <Stack.Screen name="Edit" component={EditTaskScreen} />
+        <Stack.Screen
+          name="NewTask"
+          component={NewTaskScreen}
+          options={options}
+        />
+        <Stack.Screen
+          name="Edit"
+          component={EditTaskScreen}
+          options={options}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

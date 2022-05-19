@@ -11,7 +11,7 @@ import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
 import {Loader} from './components';
 import CustomTheme from './assets/theme/custom-theme.json';
-import {useTheme} from 'styled-components';
+import Toast from 'react-native-toast-message';
 
 const Index = () => {
   const {isSuccess, isError, error, data} = useGetUserByDeviceIdQuery(
@@ -48,6 +48,7 @@ const App = () => {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={{...theme, ...CustomTheme}}>
         <Index />
+        <Toast />
       </ApplicationProvider>
     </Provider>
   );

@@ -62,7 +62,12 @@ const NewTask = ({navigation}: NativeStackScreenProps<any>) => {
         <InputContainer>
           <RenderInputController label="Title" inputControl={control} />
           {errors.title && <Error>{errors.title.message}</Error>}
-          <RenderInputController label="Description" inputControl={control} />
+          <RenderInputController
+            label="Description"
+            inputControl={control}
+            multiline={true}
+            minHeight={64}
+          />
           {errors.description && <Error>{errors.description.message}</Error>}
           <RenderDateController
             label="Deadline"
@@ -77,6 +82,8 @@ const NewTask = ({navigation}: NativeStackScreenProps<any>) => {
           isLoading={isLoading}
           disabled={!isValid}
           onPress={handleSubmit(onSubmit)}
+          status="primary"
+          appearance="filled"
         />
         <Info>{isError && <Error>{error}</Error>}</Info>
       </Container>
