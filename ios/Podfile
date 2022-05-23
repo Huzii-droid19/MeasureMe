@@ -21,8 +21,6 @@ target 'MeasureMe' do
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
   target 'MeasureMeTests' do
@@ -34,10 +32,10 @@ target 'MeasureMe' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
-  use_flipper!()
+  # use_flipper!()
 
-  post_install do |installer|
-    react_native_post_install(installer)
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
-  end
+  # post_install do |installer|
+    #react_native_post_install(installer)
+    # __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  # end
 end
