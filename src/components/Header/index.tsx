@@ -14,14 +14,14 @@ type SearchBarProps = {
   search: string;
   onSearch: (text: string) => void;
   iconColor: string;
-  toggleSearch: (fn: (prevState: boolean) => boolean) => void;
+  toggleSearch: () => void;
 };
 
 type MonthViewProps = {
   currentDate: string;
   calendarHandler: () => void;
   iconColor: string;
-  toggleSearch: (fn: (prevState: boolean) => boolean) => void;
+  toggleSearch: () => void;
 };
 
 const SearchBar = ({
@@ -33,8 +33,7 @@ const SearchBar = ({
   return (
     <>
       <InputField placeholder="Search" value={search} onChangeText={onSearch} />
-      <TouchableOpacity
-        onPress={() => toggleSearch((prevState: boolean) => !prevState)}>
+      <TouchableOpacity onPress={toggleSearch}>
         <StyledIcon name="close" fill={iconColor} />
       </TouchableOpacity>
     </>
@@ -54,8 +53,7 @@ const MonthView = ({
         <StyledIcon name="calendar-outline" fill={iconColor} />
       </MonthWrapper>
 
-      <TouchableOpacity
-        onPress={() => toggleSearch((prevState: boolean) => !prevState)}>
+      <TouchableOpacity onPress={toggleSearch}>
         <StyledIcon name="search-outline" fill={iconColor} />
       </TouchableOpacity>
     </>
@@ -78,14 +76,14 @@ const Header = ({
           search={search}
           onSearch={onSearch}
           iconColor={theme['color-primary-default']}
-          toggleSearch={setIsSearchingVisible}
+          toggleSearch={() => setIsSearchingVisible(prevState => !prevState)}
         />
       ) : (
         <MonthView
           currentDate={currentDate}
           iconColor={theme['color-primary-default']}
           calendarHandler={calendarHandler}
-          toggleSearch={setIsSearchingVisible}
+          toggleSearch={() => setIsSearchingVisible(prevState => !prevState)}
         />
       )}
     </Container>
