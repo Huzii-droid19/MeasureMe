@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
 import {Icon, Input, Layout, Text} from '@ui-kitten/components';
-import {TouchableOpacity} from 'react-native';
 import {Dimensions} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
@@ -17,7 +16,7 @@ export const Container = styled(Layout)`
   elevation: 5;
   background-color: ${({theme}: {theme: string}) => theme};
 `;
-export const MonthWrapper = styled(TouchableOpacity)`
+export const MonthWrapper = styled.TouchableOpacity`
   flex: 0.5;
   flex-direction: row;
   align-items: center;

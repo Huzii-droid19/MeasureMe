@@ -14,26 +14,27 @@ type SearchBarProps = {
   search: string;
   onSearch: (text: string) => void;
   iconColor: string;
-  searchHandler: () => void;
+  toggleSearch: (prevState: any) => void;
 };
 
 type MonthViewProps = {
   currentDate: string;
   calendarHandler: () => void;
   iconColor: string;
-  searchHandler: () => void;
+  toggleSearch: (prevState: any) => void;
 };
 
 const SearchBar = ({
   search,
   onSearch,
   iconColor,
-  searchHandler,
+  toggleSearch,
 }: SearchBarProps) => {
   return (
     <>
       <InputField placeholder="Search" value={search} onChangeText={onSearch} />
-      <TouchableOpacity onPress={searchHandler}>
+      <TouchableOpacity
+        onPress={() => toggleSearch((prevState: boolean) => !prevState)}>
         <StyledIcon name="close" fill={iconColor} />
       </TouchableOpacity>
     </>
@@ -44,7 +45,7 @@ const MonthView = ({
   currentDate,
   calendarHandler,
   iconColor,
-  searchHandler,
+  toggleSearch,
 }: MonthViewProps) => {
   return (
     <>
@@ -53,7 +54,8 @@ const MonthView = ({
         <StyledIcon name="calendar-outline" fill={iconColor} />
       </MonthWrapper>
 
-      <TouchableOpacity onPress={searchHandler}>
+      <TouchableOpacity
+        onPress={() => toggleSearch((prevState: boolean) => !prevState)}>
         <StyledIcon name="search-outline" fill={iconColor} />
       </TouchableOpacity>
     </>
@@ -67,9 +69,6 @@ const Header = ({
 }: HeaderProps) => {
   const [isSearchingVisible, setIsSearchingVisible] =
     React.useState<boolean>(false);
-  const searchHandler = () => {
-    setIsSearchingVisible(!isSearchingVisible);
-  };
   const theme = useTheme();
 
   return (
@@ -79,14 +78,14 @@ const Header = ({
           search={search}
           onSearch={onSearch}
           iconColor={theme['color-primary-default']}
-          searchHandler={searchHandler}
+          toggleSearch={setIsSearchingVisible}
         />
       ) : (
         <MonthView
           currentDate={currentDate}
           iconColor={theme['color-primary-default']}
           calendarHandler={calendarHandler}
-          searchHandler={searchHandler}
+          toggleSearch={setIsSearchingVisible}
         />
       )}
     </Container>
