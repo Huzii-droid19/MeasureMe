@@ -14,14 +14,14 @@ type SearchBarProps = {
   search: string;
   onSearch: (text: string) => void;
   iconColor: string;
-  toggleSearch: (prevState: any) => void;
+  toggleSearch: (fn: (prevState: boolean) => boolean) => void;
 };
 
 type MonthViewProps = {
   currentDate: string;
   calendarHandler: () => void;
   iconColor: string;
-  toggleSearch: (prevState: any) => void;
+  toggleSearch: (fn: (prevState: boolean) => boolean) => void;
 };
 
 const SearchBar = ({
