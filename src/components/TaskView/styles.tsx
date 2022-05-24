@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import {Layout, Text, Icon} from '@ui-kitten/components';
 import {TouchableOpacity} from 'react-native';
 
@@ -11,6 +11,10 @@ export const Container = styled(Layout)`
   margin-horizontal: 10px;
   border-radius: 10px;
   elevation: 5;
+  shadow-color: #000;
+  shadow-opacity: 0.2;
+  shadow-radius: 5px;
+  shadow-offset: 0px 3px;
 `;
 export const TextContainer = styled(TouchableOpacity)`
   flex: 1;
