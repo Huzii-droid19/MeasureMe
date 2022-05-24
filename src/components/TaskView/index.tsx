@@ -28,7 +28,7 @@ const ItemView = ({item, onPress, theme, navigation}: ItemViewProps) => {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   };
   return (
-    <Container>
+    <Container theme={theme['color-primary-default']}>
       <TextContainer onPress={onPress}>
         <Title>{item.title}</Title>
         <Description>
