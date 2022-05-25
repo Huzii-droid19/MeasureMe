@@ -16,7 +16,7 @@ export const Container = styled(Layout)(({theme}: ContainerProps) => ({
   paddingHorizontal: 25,
   height: height * 0.1,
   width: width,
-  elevation: 5,
+  elevation: '5',
   backgroundColor: theme['color-header'],
 }));
 export const MonthWrapper = styled.TouchableOpacity(() => ({
@@ -40,8 +40,8 @@ export const StyledIcon = styled(Icon)({
   width: 25,
 });
 export const InputField = styled(Input)({
-  heigth: width * 0.8,
-  width: width * 0.05,
+  width: width * 0.8,
+  height: height * 0.05,
   borderRadius: 5,
   paddingHorizontal: 10,
 });

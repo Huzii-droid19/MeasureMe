@@ -6,7 +6,7 @@ export const Container = styled(Layout)({
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  padding: 3,
+  padding: 35,
 });
 
 export const Title = styled(Text)({

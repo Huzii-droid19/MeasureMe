@@ -14,6 +14,6 @@ export const ButtonContainer = styled(Layout)({
 });
 export const DeleteText = styled(Text)({
   fontSize: 20,
-  fontWieght: 700,
+  fontWeight: 700,
   textAlign: 'center',
 });

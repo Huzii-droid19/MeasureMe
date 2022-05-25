@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
-import {Dimensions, FlatList} from 'react-native';
-import {Animated} from 'react-native';
+import {FlatList, Animated, Dimensions} from 'react-native';
 import {Icon, Layout, Button} from '@ui-kitten/components';
 import {Calendar} from 'react-native-calendars';
 
@@ -9,6 +8,7 @@ const {width} = Dimensions.get('window');
 export const Container = styled(Layout)({
   flex: 1,
 });
+
 export const CalendarView = styled(Animated.View)({
   flexDirection: 'row',
   alignItems: 'center',
@@ -33,11 +33,12 @@ export const TaskList = styled(FlatList)({
   paddingBottom: 20,
 });
 export const FloatingButton = styled(Button)({
+  alignSelf: 'flex-end',
   postion: 'absolute',
   bottom: 25,
   right: 25,
   width: 50,
   height: 50,
   borderRadius: 25,
-  elevation: 5,
+  elevation: '5',
 });

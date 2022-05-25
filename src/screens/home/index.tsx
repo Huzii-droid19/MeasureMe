@@ -134,13 +134,13 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
         ) : (
           <Loader />
         )}
+        <FloatingButton
+          onPress={() => navigation.navigate('NewTask')}
+          accessoryLeft={(props: any) => (
+            <StyledIcon {...props} name="plus-outline" />
+          )}
+        />
       </Container>
-      <FloatingButton
-        onPress={() => navigation.navigate('NewTask')}
-        accessoryLeft={(props: any) => (
-          <StyledIcon {...props} name="plus-outline" />
-        )}
-      />
     </ScreenWrapper>
   );
 };

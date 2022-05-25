@@ -2,21 +2,18 @@ import styled from 'styled-components/native';
 import {Layout, Text, Icon} from '@ui-kitten/components';
 
 export const Container = styled(Layout)({
-  flexDirection: 'row',
+  flexDirection: 'row' as const,
   alignItems: 'center',
   justifyConntent: 'space-between',
   padding: 10,
   marginVertical: 5,
   marginHorizontal: 10,
   borderRadius: 10,
-  elevation: 5,
+  elevation: '5',
   shadowColor: '#000',
-  shadowOpacity: 0.2,
+  shadowOpacity: '0.3',
   shadowRadius: 5,
-  shadowOffset: {
-    width: 0,
-    height: 3,
-  },
+  shadowOffset: '0px 3px',
 });
 export const TextContainer = styled.TouchableOpacity({
   flex: 1,
