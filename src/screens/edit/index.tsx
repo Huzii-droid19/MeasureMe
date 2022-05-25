@@ -12,14 +12,15 @@ import * as yup from 'yup';
 import {TaskForm, Task} from '../../types';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
-import {useEditTaskMutation} from '../../store/slice/apiSlice';
+import {useEditTaskMutation} from '../../store/api';
+import {navigationContainerRef} from '../../navigation';
 
 type EditScreenProps = {
   route: RouteProp<{params: {item: Task}}, 'params'>;
   navigation: NavigationProp<any>;
 };
 
-const EditTask = ({navigation, route}: EditScreenProps) => {
+const EditTask = ({route}: EditScreenProps) => {
   const {item}: {item: Task} = route.params;
   const taskSchema = yup.object().shape({
     title: yup
@@ -59,25 +60,21 @@ const EditTask = ({navigation, route}: EditScreenProps) => {
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
-  const [editTask, {isLoading, isSuccess, isError, error}] =
-    useEditTaskMutation();
+  const [editTask, {isLoading, isError, error}] = useEditTaskMutation();
 
-  const onSubmit = ({title, description, date}: TaskForm) => {
-    editTask({
+  const onSubmit = async ({title, description, date}: TaskForm) => {
+    await editTask({
       id: item.id,
       title,
       description,
       date,
       isCompleted: false,
       userId: item.userId,
+    }).then(res => {
+      navigationContainerRef.goBack();
     });
     reset();
   }; // function to call when user submit the form
-  React.useEffect(() => {
-    if (isSuccess) {
-      navigation.navigate('Home');
-    }
-  }, [isSuccess]);
   const theme = useTheme();
   return (
     <ScreenWrapper

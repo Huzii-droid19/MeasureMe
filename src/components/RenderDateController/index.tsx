@@ -18,25 +18,27 @@ const index = ({
   getValues,
 }: DateControllerProps) => {
   return (
-    <Controller
-      control={inputControl}
-      render={({field: {onBlur}}) => (
-        <StyledDatePicker
-          label={() => <InputLabel>{label}</InputLabel>}
-          placeholder={getValues('date')}
-          date={getValues('date')}
-          onSelect={(date: Date) =>
-            setValue('date', date, {shouldValidate: true})
-          }
-          onBlur={onBlur}
-          onFocus={() => {
-            Keyboard.dismiss();
-          }}
-          min={new Date()}
-        />
-      )}
-      name={label.toLocaleLowerCase()}
-    />
+    <>
+      <Controller
+        control={inputControl}
+        render={({field: {onBlur}}) => (
+          <StyledDatePicker
+            label={() => <InputLabel>{label}</InputLabel>}
+            placeholder={getValues('date')}
+            date={getValues('date')}
+            onSelect={(date: Date) =>
+              setValue('date', date, {shouldValidate: true})
+            }
+            onBlur={onBlur}
+            onFocus={() => {
+              Keyboard.dismiss();
+            }}
+            min={new Date()}
+          />
+        )}
+        name={label.toLocaleLowerCase()}
+      />
+    </>
   );
 };
 

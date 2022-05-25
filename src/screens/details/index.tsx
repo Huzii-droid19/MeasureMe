@@ -8,8 +8,6 @@ import {
   Deadline,
   Description,
   ButtonContainer,
-  UndoText,
-  UndoWrapper,
   IconWrapper,
   StyledIcon,
 } from './styles';
@@ -19,7 +17,7 @@ import {NavigationProp, RouteProp} from '@react-navigation/native';
 import moment from 'moment';
 import {DeleteModal, LoadingButton} from '../../components';
 import {useTheme} from '@ui-kitten/components';
-import {useEditTaskMutation} from '../../store/slice/apiSlice';
+import {useEditTaskMutation} from '../../store/api';
 import Toast from 'react-native-toast-message';
 
 type DetailsScreenProps = {
@@ -61,23 +59,21 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
   const backdropStyle = {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   };
-  const [editTask, {isSuccess, isLoading, isError, error}] =
-    useEditTaskMutation();
-  const onStatusUpdate = (status: boolean) => {
-    editTask({...item, isCompleted: status});
-  };
-  React.useEffect(() => {
-    if (isSuccess) {
+  const [editTask, {isLoading, isError, error}] = useEditTaskMutation();
+  const onStatusUpdate = async (status: boolean) => {
+    await editTask({...item, isCompleted: status}).then(res => {
+      const task = res?.data as Task;
       Toast.show({
         type: 'success',
         position: 'top',
         text1: 'Task Status',
-        text2: 'Completed Successfully🎉',
+        text2: task.isCompleted ? 'Completed Successfully🎉' : 'Task Reopend',
         visibilityTime: 3000,
       });
       navigation.goBack();
-    }
-  }, [isSuccess]);
+    });
+  };
+
   return (
     <ScreenWrapper
       statusBarColor={theme['background-basic-color-1']}
@@ -117,7 +113,6 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
         backdropStyle={backdropStyle}
         onBackdropPress={onClose}
         task={item}
-        navigation={navigation}
       />
     </ScreenWrapper>
   );

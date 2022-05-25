@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {useGetTasksQuery} from '../../store/slice/apiSlice';
+import {useGetTasksQuery} from '../../store/api';
 import {getUniqueId} from 'react-native-device-info';
 import {
   Container,
@@ -13,12 +13,12 @@ import {
 } from './styles';
 import {TaskView, Loader, EmptyListComponent, Header} from '../../components';
 import {Task} from '../../types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useTheme} from '@ui-kitten/components';
 import moment from 'moment';
 import {DateData} from 'react-native-calendars';
+import {navigationContainerRef} from '../../navigation';
 
-const Home = ({navigation}: NativeStackScreenProps<any>) => {
+const Home = () => {
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
   const {
     data: tasks,
@@ -55,9 +55,8 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
     return (
       <TaskView
         item={item}
-        onPress={() => navigation.navigate('Details', {item})}
+        onPress={() => navigationContainerRef.navigate('Details', {item})}
         theme={theme}
-        navigation={navigation}
       />
     );
   };
@@ -135,7 +134,7 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
           <Loader />
         )}
         <FloatingButton
-          onPress={() => navigation.navigate('NewTask')}
+          onPress={() => navigationContainerRef.navigate('NewTask')}
           accessoryLeft={(props: any) => (
             <StyledIcon {...props} name="plus-outline" />
           )}

@@ -15,6 +15,10 @@ export const userApi = createApi({
   endpoints: builder => ({
     getUserByDeviceId: builder.query<User, string>({
       query: deviceId => `users?DeviceId=${deviceId}`,
+      transformResponse: (response: User[]) => {
+        const user = response.shift();
+        return user;
+      },
     }),
     getTasks: builder.query<Task[], string>({
       async queryFn(_arg, _queryApi, _extraOptioins, fetchWithBQ) {
@@ -76,7 +80,7 @@ export const userApi = createApi({
       }),
       invalidatesTags: ['Task'],
     }),
-    deleteTask: builder.mutation<void, Task>({
+    deleteTask: builder.mutation<Task, Task>({
       query: task => ({
         url: `users/${task.userId}/Task/${task.id}`,
         method: 'DELETE',
