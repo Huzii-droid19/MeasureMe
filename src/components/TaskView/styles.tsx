@@ -1,44 +1,43 @@
 import styled from 'styled-components/native';
 import {Layout, Text, Icon} from '@ui-kitten/components';
-import {TouchableOpacity} from 'react-native';
 
-export const Container = styled(Layout)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  margin-vertical: 5px;
-  margin-horizontal: 10px;
-  border-radius: 10px;
-  elevation: 5;
-  shadow-color: #000;
-  shadow-opacity: 0.2;
-  shadow-radius: 5px;
-  shadow-offset: 0px 3px;
-`;
-export const TextContainer = styled(TouchableOpacity)`
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin-left: 10px;
-`;
-export const Title = styled(Text)`
-  font-size: 16px;
-  font-weight: bold;
-  margin-left: 10px;
-`;
-export const Description = styled(Text)`
-  font-size: 16px;
-  margin-left: 10px;
-`;
-export const Date = styled(Text)`
-  font-size: 10px;
-  margin-left: 10px;
-`;
-export const StyledIcon = styled(Icon)`
-  height: 25px;
-  width: 25px;
-  margin-right: 10px;
-`;
-export const IconWrapper = styled(TouchableOpacity)``;
+export const Container = styled(Layout)({
+  flexDirection: 'row' as const,
+  alignItems: 'center',
+  justifyConntent: 'space-between',
+  padding: 10,
+  marginVertical: 5,
+  marginHorizontal: 10,
+  borderRadius: 10,
+  elevation: '5',
+  shadowColor: '#000',
+  shadowOpacity: '0.3',
+  shadowRadius: 5,
+  shadowOffset: '0px 3px',
+});
+export const TextContainer = styled.TouchableOpacity({
+  flex: 1,
+  flexDriection: 'column',
+  alignItems: 'flex-start',
+  justifyContent: 'center',
+  marginLeft: 10,
+});
+export const Title = styled(Text)({
+  fontSize: 16,
+  fontWeight: 'bold',
+  marginLeft: 10,
+});
+export const Description = styled(Text)({
+  fontSize: 16,
+  marginLeft: 10,
+});
+export const Date = styled(Text)({
+  fontSize: 10,
+  marginLeft: 10,
+});
+export const StyledIcon = styled(Icon)({
+  height: 25,
+  width: 25,
+  marginRight: 10,
+});
+export const IconWrapper = styled.TouchableOpacity({});

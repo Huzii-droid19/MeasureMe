@@ -1,43 +1,44 @@
 import styled from 'styled-components/native';
-import {Dimensions, FlatList} from 'react-native';
-import {Animated} from 'react-native';
+import {FlatList, Animated, Dimensions} from 'react-native';
 import {Icon, Layout, Button} from '@ui-kitten/components';
 import {Calendar} from 'react-native-calendars';
 
 const {width} = Dimensions.get('window');
 
-export const Container = styled(Layout)`
-  flex: 1;
-`;
-export const CalendarView = styled(Animated.View)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: ${width}px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 1;
-`;
-export const StyledIcon = styled(Icon)`
-  height: 25px;
-  width: 25px;
-`;
+export const Container = styled(Layout)({
+  flex: 1,
+});
 
-export const TaskCalendar = styled(Calendar)`
-  width: ${width}px;
-`;
+export const CalendarView = styled(Animated.View)({
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: width,
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  zIndex: 1,
+});
+export const StyledIcon = styled(Icon)({
+  height: 25,
+  width: 25,
+});
 
-export const TaskList = styled(FlatList)`
-  padding-top: 10px;
-  padding-bottom: 20px;
-`;
-export const FloatingButton = styled(Button)`
-  position: absolute;
-  bottom: 25px;
-  right: 25px;
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  elevation: 5;
-`;
+export const TaskCalendar = styled(Calendar)({
+  width: width,
+});
+
+export const TaskList = styled(FlatList)({
+  paddingTop: 10,
+  paddingBottom: 20,
+});
+export const FloatingButton = styled(Button)({
+  alignSelf: 'flex-end',
+  postion: 'absolute',
+  bottom: 25,
+  right: 25,
+  width: 50,
+  height: 50,
+  borderRadius: 25,
+  elevation: '5',
+});
