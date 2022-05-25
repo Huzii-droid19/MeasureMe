@@ -70,7 +70,7 @@ const Header = ({
   const theme = useTheme();
 
   return (
-    <Container theme={theme['color-header']}>
+    <Container theme={theme}>
       {isSearchingVisible ? (
         <SearchBar
           search={search}
