@@ -5,41 +5,40 @@ import {
   RenderInputController,
   RenderDateController,
   LoadingButton,
-} from '../../components';
+} from 'components/index';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {TaskForm, Task} from '../../types';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {TaskForm, Task} from 'types/index';
+import {RouteProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
-import {useEditTaskMutation} from '../../store/slice/apiSlice';
+import {useEditTaskMutation} from 'store/api/index';
+import {NavigationService} from 'navigation/index';
 
 type EditScreenProps = {
-  route: RouteProp<{params: {item: Task}}, 'params'>;
-  navigation: NavigationProp<any>;
+  route: RouteProp<{params: {task: Task}}, 'params'>;
 };
 
-const EditTask = ({navigation, route}: EditScreenProps) => {
-  const {item}: {item: Task} = route.params;
+const EditTask = ({route}: EditScreenProps) => {
+  const {task}: {task: Task} = route.params;
   const taskSchema = yup.object().shape({
     title: yup
       .string()
       .required()
-
       .test('is-title', 'Title is not updated', value => {
-        return value !== item.title;
+        return value !== task.title;
       }),
     description: yup
       .string()
       .required()
       .test('is-description', 'Description is not updated', value => {
-        return value !== item.description;
+        return value !== task.description;
       }),
     date: yup
       .date()
       .required()
       .test('is-date', 'Date is not updated', value => {
-        return value?.toDateString() !== new Date(item.date).toDateString();
+        return value?.toDateString() !== new Date(task.date).toDateString();
       }),
   });
   const {
@@ -51,33 +50,29 @@ const EditTask = ({navigation, route}: EditScreenProps) => {
     reset,
   } = useForm<TaskForm>({
     defaultValues: {
-      title: item?.title,
-      description: item.description,
-      date: new Date(item.date),
-      isCompleted: item.isCompleted,
+      title: task?.title,
+      description: task.description,
+      date: new Date(task.date),
+      isCompleted: task.isCompleted,
     },
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
-  const [editTask, {isLoading, isSuccess, isError, error}] =
-    useEditTaskMutation();
+  const [editTask, {isLoading, isError, error}] = useEditTaskMutation();
 
-  const onSubmit = ({title, description, date}: TaskForm) => {
-    editTask({
-      id: item.id,
+  const onSubmit = async ({title, description, date}: TaskForm) => {
+    await editTask({
+      id: task.id,
       title,
       description,
       date,
       isCompleted: false,
-      userId: item.userId,
+      userId: task.userId,
+    }).then(res => {
+      NavigationService.goBack();
     });
     reset();
   }; // function to call when user submit the form
-  React.useEffect(() => {
-    if (isSuccess) {
-      navigation.navigate('Home');
-    }
-  }, [isSuccess]);
   const theme = useTheme();
   return (
     <ScreenWrapper

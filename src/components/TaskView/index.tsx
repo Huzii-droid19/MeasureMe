@@ -8,18 +8,17 @@ import {
   StyledIcon,
   IconWrapper,
 } from './styles';
-import {Task} from '../../types';
+import {Task} from 'types/index';
 import moment from 'moment';
-import {NavigationProp} from '@react-navigation/native';
-import DeleteModal from '../DeleteModal';
+import {DeleteModal} from 'components/index';
+import {NavigationService} from 'navigation/index';
 type ItemViewProps = {
   item: Task;
   onPress: () => void;
   theme: any;
-  navigation: NavigationProp<any>;
 };
 
-const ItemView = ({item, onPress, theme, navigation}: ItemViewProps) => {
+const ItemView = ({item, onPress, theme}: ItemViewProps) => {
   const [visible, setVisible] = React.useState(false);
   const onClose = () => {
     setVisible(!visible);
@@ -38,7 +37,8 @@ const ItemView = ({item, onPress, theme, navigation}: ItemViewProps) => {
         <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>
       <>
-        <IconWrapper onPress={() => navigation.navigate('Edit', {item: item})}>
+        <IconWrapper
+          onPress={() => NavigationService.navigate('Edit', {task: item})}>
           <StyledIcon name="edit-outline" fill={theme['color-primary-500']} />
         </IconWrapper>
         <IconWrapper>
@@ -55,7 +55,6 @@ const ItemView = ({item, onPress, theme, navigation}: ItemViewProps) => {
         backdropStyle={backdropStyle}
         onBackdropPress={onClose}
         task={item}
-        navigation={navigation}
       />
     </Container>
   );

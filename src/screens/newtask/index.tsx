@@ -3,12 +3,15 @@ import {Container, Label, InputContainer, Error, Info} from './styles';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {RenderInputController, RenderDateController} from '../../components';
-import {LoadingButton} from '../../components';
-import {useAddTaskMutation} from '../../store/slice/apiSlice';
-import {TaskForm} from '../../types';
+import {
+  RenderInputController,
+  RenderDateController,
+  LoadingButton,
+} from 'components/index';
+import {useAddTaskMutation} from 'store/api/index';
+import {TaskForm} from 'types/index';
+import {NavigationService} from 'navigation/index';
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -16,7 +19,7 @@ const taskSchema = yup.object().shape({
   date: yup.date().required(),
   isCompleted: yup.boolean().required(),
 });
-const NewTask = ({navigation}: NativeStackScreenProps<any>) => {
+const NewTask = () => {
   const {
     control,
     setValue,
@@ -34,27 +37,24 @@ const NewTask = ({navigation}: NativeStackScreenProps<any>) => {
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
-  const [addTask, {isError, error, isSuccess, isLoading}] =
-    useAddTaskMutation();
-  const onSubmit = ({title, description, date, isCompleted}: TaskForm) => {
-    addTask({
+  const [addTask, {isError, error, isLoading}] = useAddTaskMutation();
+  const onSubmit = async ({
+    title,
+    description,
+    date,
+    isCompleted,
+  }: TaskForm) => {
+    await addTask({
       title: title,
       description: description,
       date: date,
       isCompleted: isCompleted,
+    }).then(res => {
+      NavigationService.goBack();
     });
-    // reset({
-    //   title: getValues('title'),
-    // });
-    // console.log(getValues());
     reset();
   }; // function to call when user submit the form
 
-  React.useEffect(() => {
-    if (isSuccess) {
-      navigation.navigate('Home');
-    }
-  }, [isSuccess]);
   return (
     <ScreenWrapper>
       <Container>

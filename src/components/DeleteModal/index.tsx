@@ -1,10 +1,10 @@
 import React from 'react';
 import {Container, DeleteText, ButtonContainer} from './style';
 import {Modal, Card} from '@ui-kitten/components';
-import {useDeleteTaskMutation} from '../../store/slice/apiSlice';
-import {Task} from '../../types';
-import {NavigationProp} from '@react-navigation/native';
-import LoadingButton from '../LoadingButton';
+import {useDeleteTaskMutation} from 'store/api/index';
+import {Task} from 'types/index';
+import {LoadingButton} from 'components/index';
+import {NavigationService} from 'navigation/index';
 
 type ModalProps = {
   visible: boolean;
@@ -12,7 +12,6 @@ type ModalProps = {
   onBackdropPress: () => void;
   backdropStyle: any;
   task: Task;
-  navigation: NavigationProp<any>;
 };
 
 const DeleteModal = ({
@@ -21,18 +20,14 @@ const DeleteModal = ({
   onBackdropPress,
   backdropStyle,
   task,
-  navigation,
 }: ModalProps) => {
-  const [deleteTask, {isSuccess, isLoading}] = useDeleteTaskMutation();
-  const onDelete = () => {
-    deleteTask(task);
-  };
-  React.useEffect(() => {
-    if (isSuccess) {
+  const [deleteTask, {isLoading}] = useDeleteTaskMutation();
+  const onDelete = async () => {
+    await deleteTask(task).then(res => {
       onClose();
-      navigation.navigate('Home');
-    }
-  }, [isSuccess]);
+      NavigationService.navigate('Home');
+    });
+  };
 
   return (
     <Container>

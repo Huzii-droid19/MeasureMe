@@ -41,17 +41,6 @@ export const Description = styled(Text)({
   marginTop: 30,
   textAlign: 'justify',
 });
-export const UndoWrapper = styled(Layout)({
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-export const UndoText = styled(Text)({
-  fontSize: 15,
-  fontWeight: 700,
-  marginTop: 30,
-  textAlign: 'justify',
-});
 export const IconWrapper = styled.TouchableOpacity({
   marginLeft: 20,
 });

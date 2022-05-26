@@ -8,27 +8,25 @@ import {
   Deadline,
   Description,
   ButtonContainer,
-  UndoText,
-  UndoWrapper,
   IconWrapper,
   StyledIcon,
 } from './styles';
 
-import {Task} from '../../types';
+import {RootStackParamsList, Task} from 'types/index';
 import {NavigationProp, RouteProp} from '@react-navigation/native';
 import moment from 'moment';
-import {DeleteModal, LoadingButton} from '../../components';
+import {DeleteModal, LoadingButton} from 'components/index';
 import {useTheme} from '@ui-kitten/components';
-import {useEditTaskMutation} from '../../store/slice/apiSlice';
+import {useEditTaskMutation} from 'store/api/index';
 import Toast from 'react-native-toast-message';
 
 type DetailsScreenProps = {
-  route: RouteProp<{params: {item: Task}}, 'params'>;
-  navigation: NavigationProp<any>;
+  route: RouteProp<{params: {task: Task}}, 'params'>;
+  navigation: NavigationProp<RootStackParamsList>;
 };
 
 const Details = ({navigation, route}: DetailsScreenProps) => {
-  const {item}: {item: Task} = route.params;
+  const {task}: {task: Task} = route.params;
   const [visible, setVisible] = React.useState(false);
   const theme = useTheme();
   const ScrollViewProps = {
@@ -43,7 +41,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       <IconWrapper onPress={() => setVisible(!visible)}>
         <StyledIcon name="trash-2-outline" fill={theme['color-danger-500']} />
       </IconWrapper>
-      <IconWrapper onPress={() => navigation.navigate('Edit', {item: item})}>
+      <IconWrapper onPress={() => navigation.navigate('Edit', {task: task})}>
         <StyledIcon name="edit-2-outline" fill={theme['color-primary-500']} />
       </IconWrapper>
     </>
@@ -61,23 +59,23 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
   const backdropStyle = {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   };
-  const [editTask, {isSuccess, isLoading, isError, error}] =
-    useEditTaskMutation();
-  const onStatusUpdate = (status: boolean) => {
-    editTask({...item, isCompleted: status});
-  };
-  React.useEffect(() => {
-    if (isSuccess) {
+  const [editTask, {isLoading, isError, error}] = useEditTaskMutation();
+  const onStatusUpdate = async (status: boolean) => {
+    await editTask({...task, isCompleted: status}).then(res => {
+      const updated_task = res?.data as Task;
       Toast.show({
         type: 'success',
         position: 'top',
         text1: 'Task Status',
-        text2: 'Completed Successfully🎉',
+        text2: updated_task.isCompleted
+          ? 'Completed Successfully🎉'
+          : 'Task Reopend',
         visibilityTime: 3000,
       });
       navigation.goBack();
-    }
-  }, [isSuccess]);
+    });
+  };
+
   return (
     <ScreenWrapper
       statusBarColor={theme['background-basic-color-1']}
@@ -85,11 +83,11 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       scrollType="scroll"
       scrollViewProps={ScrollViewProps}>
       <Container>
-        <Title category="label">{item.title}</Title>
-        <Deadline>{`Due: ${moment(item.date).format('YYYY-MM-DD')}`}</Deadline>
-        <Description>{item.description}</Description>
+        <Title category="label">{task.title}</Title>
+        <Deadline>{`Due: ${moment(task.date).format('YYYY-MM-DD')}`}</Deadline>
+        <Description>{task.description}</Description>
         <ButtonContainer>
-          {item.isCompleted ? (
+          {task.isCompleted ? (
             <LoadingButton
               isLoading={isLoading}
               label="Reopen"
@@ -116,8 +114,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
         onClose={onClose}
         backdropStyle={backdropStyle}
         onBackdropPress={onClose}
-        task={item}
-        navigation={navigation}
+        task={task}
       />
     </ScreenWrapper>
   );

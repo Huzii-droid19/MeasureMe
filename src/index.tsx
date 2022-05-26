@@ -1,37 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import {Provider} from 'react-redux';
-import {store} from './store';
-import Navigation from './navigation';
+import {store} from 'store/index';
+import Navigation from 'navigation/index';
 import SplashScreen from 'react-native-splash-screen';
-import {useGetUserByDeviceIdQuery} from './store/slice/apiSlice';
+import {useGetUserByDeviceIdQuery} from 'store/api/index';
 import {getUniqueId} from 'react-native-device-info';
 import {Appearance} from 'react-native';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
-import {Loader} from './components';
-import CustomTheme from './assets/theme/custom-theme.json';
+import {Loader} from 'components/index';
+import {CustomTheme} from 'assets/index';
 import Toast from 'react-native-toast-message';
 import {ThemeProvider} from 'styled-components';
+import {setAuthUser} from 'store/slice/authSlice';
+import {useDispatch} from 'react-redux';
+import {isEmpty} from 'utils/index';
 
 const Index = () => {
-  const {isSuccess, isError, error, data} = useGetUserByDeviceIdQuery(
-    getUniqueId(),
-  );
-  const [route, setRoute] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const {isSuccess, isLoading, data} = useGetUserByDeviceIdQuery(getUniqueId());
+  const dispatch = useDispatch();
   useEffect(() => {
-    if (isSuccess) {
-      setRoute('Home');
-      setIsLoading(false);
-    }
-    if (isSuccess && Object.keys(data).length === 0) {
-      setRoute('Register');
-      setIsLoading(false);
+    if (isSuccess && !isEmpty(data)) {
+      dispatch(setAuthUser({isLoggedIn: true, userMeta: data}));
     }
     SplashScreen.hide();
-  }, [isSuccess, isError, error]);
-  return <>{isLoading ? <Loader /> : <Navigation route={route} />}</>;
+  }, [isSuccess]);
+  return <>{isLoading ? <Loader /> : <Navigation />}</>;
 };
 
 const App = () => {

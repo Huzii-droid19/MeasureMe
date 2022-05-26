@@ -1,8 +1,7 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {useGetTasksQuery} from '../../store/slice/apiSlice';
-import {getUniqueId} from 'react-native-device-info';
+import {useGetTasksQuery} from 'store/api/index';
 import {
   Container,
   CalendarView,
@@ -11,21 +10,16 @@ import {
   TaskList,
   FloatingButton,
 } from './styles';
-import {TaskView, Loader, EmptyListComponent, Header} from '../../components';
-import {Task} from '../../types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {TaskView, Loader, EmptyListComponent, Header} from 'components/index';
+import {Task} from 'types/index';
 import {useTheme} from '@ui-kitten/components';
 import moment from 'moment';
 import {DateData} from 'react-native-calendars';
+import {NavigationService} from 'navigation/index';
 
-const Home = ({navigation}: NativeStackScreenProps<any>) => {
+const Home = () => {
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
-  const {
-    data: tasks,
-    isSuccess,
-    isLoading,
-    refetch,
-  } = useGetTasksQuery(getUniqueId());
+  const {data: tasks, isSuccess, isLoading, refetch} = useGetTasksQuery();
   const [filteredData, setFilteredData] = useState(tasks);
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [search, setSearch] = useState('');
@@ -55,9 +49,8 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
     return (
       <TaskView
         item={item}
-        onPress={() => navigation.navigate('Details', {item})}
+        onPress={() => NavigationService.navigate('Details', {task: item})}
         theme={theme}
-        navigation={navigation}
       />
     );
   };
@@ -135,7 +128,7 @@ const Home = ({navigation}: NativeStackScreenProps<any>) => {
           <Loader />
         )}
         <FloatingButton
-          onPress={() => navigation.navigate('NewTask')}
+          onPress={() => NavigationService.navigate('NewTask')}
           accessoryLeft={(props: any) => (
             <StyledIcon {...props} name="plus-outline" />
           )}

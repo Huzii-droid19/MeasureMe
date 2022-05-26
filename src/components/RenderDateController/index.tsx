@@ -1,7 +1,7 @@
 import React from 'react';
 import {Controller, UseFormGetValues, UseFormSetValue} from 'react-hook-form';
 import {Keyboard} from 'react-native';
-import {TaskForm} from '../../types';
+import {TaskForm} from 'types/index';
 import {StyledDatePicker, InputLabel} from './styles';
 
 interface DateControllerProps {
