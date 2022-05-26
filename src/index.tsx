@@ -24,7 +24,6 @@ const Index = () => {
     if (isSuccess && !_.isEmpty(data)) {
       dispatch(setUser({isLoggedIn: true, userMeta: data}));
     }
-
     SplashScreen.hide();
   }, [isSuccess]);
   return <>{isLoading ? <Loader /> : <Navigation />}</>;

@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {useGetTasksQuery} from '../../store/api';
-import {getUniqueId} from 'react-native-device-info';
 import {
   Container,
   CalendarView,
@@ -20,12 +19,7 @@ import {navigationContainerRef} from '../../navigation';
 
 const Home = () => {
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
-  const {
-    data: tasks,
-    isSuccess,
-    isLoading,
-    refetch,
-  } = useGetTasksQuery(getUniqueId());
+  const {data: tasks, isSuccess, isLoading, refetch} = useGetTasksQuery();
   const [filteredData, setFilteredData] = useState(tasks);
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [search, setSearch] = useState('');
