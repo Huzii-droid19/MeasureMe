@@ -1,8 +1,8 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {User, Task} from '../../types';
+import {User, Task} from 'types/index';
 import {BASE_URL} from '@env';
-import * as _ from 'lodash';
-import {store} from '..';
+import {first, getCurrentUserId} from 'utils/index';
+import {store} from 'store/index';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -13,15 +13,15 @@ export const userApi = createApi({
   endpoints: builder => ({
     getUserByDeviceId: builder.query<User, string>({
       query: deviceId => `users?DeviceId=${deviceId}`,
-      transformResponse: (response: User[]) => _.first(response),
+      transformResponse: (response: User[]) => first(response),
     }),
     getTasks: builder.query<Task[], void>({
-      query: () => `users/${store.getState().auth.userMeta?.id}/Task`,
+      query: () => `users/${getCurrentUserId(store)}/Task`,
       providesTags: ['Task'],
     }),
     addTask: builder.mutation<Task, Task>({
       query: task => ({
-        url: `users/${store.getState().auth.userMeta?.id}/Task`,
+        url: `users/${getCurrentUserId(store)}/Task`,
         method: 'POST',
         body: task,
       }),

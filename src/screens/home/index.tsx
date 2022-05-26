@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {useGetTasksQuery} from '../../store/api';
+import {useGetTasksQuery} from 'store/api/index';
 import {
   Container,
   CalendarView,
@@ -10,12 +10,12 @@ import {
   TaskList,
   FloatingButton,
 } from './styles';
-import {TaskView, Loader, EmptyListComponent, Header} from '../../components';
-import {Task} from '../../types';
+import {TaskView, Loader, EmptyListComponent, Header} from 'components/index';
+import {Task} from 'types/index';
 import {useTheme} from '@ui-kitten/components';
 import moment from 'moment';
 import {DateData} from 'react-native-calendars';
-import {navigationContainerRef} from '../../navigation';
+import {NavigationService} from 'navigation/index';
 
 const Home = () => {
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
@@ -49,7 +49,7 @@ const Home = () => {
     return (
       <TaskView
         item={item}
-        onPress={() => navigationContainerRef.navigate('Details', {item})}
+        onPress={() => NavigationService.navigate('Details', {task: item})}
         theme={theme}
       />
     );
@@ -128,7 +128,7 @@ const Home = () => {
           <Loader />
         )}
         <FloatingButton
-          onPress={() => navigationContainerRef.navigate('NewTask')}
+          onPress={() => NavigationService.navigate('NewTask')}
           accessoryLeft={(props: any) => (
             <StyledIcon {...props} name="plus-outline" />
           )}

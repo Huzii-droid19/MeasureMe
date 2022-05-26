@@ -22,3 +22,10 @@ export interface RegisterForm {
   email: string;
   name: string;
 }
+export interface RootStackParamsList {
+  Home: undefined;
+  Details: {task: Task};
+  Edit: {task: Task};
+  NewTask: undefined;
+  Register: undefined;
+}

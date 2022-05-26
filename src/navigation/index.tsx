@@ -12,11 +12,13 @@ import {
   EditTaskScreen,
 } from '../screens';
 import {useTheme} from '@ui-kitten/components';
-import {selectUser} from '../store/slice/authSlice';
+import {selectIsLoggedIn} from 'store/slice/authSlice';
 import {useSelector} from 'react-redux';
+import {RootStackParamsList} from 'types/index';
 
 const Stack = createNativeStackNavigator();
-export const navigationContainerRef = createNavigationContainerRef<any>();
+export const NavigationService =
+  createNavigationContainerRef<RootStackParamsList>();
 
 const Navigation = () => {
   const theme = useTheme();
@@ -28,11 +30,11 @@ const Navigation = () => {
       backgroundColor: theme['background-basic-color-1'],
     },
   };
-  const user = useSelector(selectUser);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
   return (
-    <NavigationContainer ref={navigationContainerRef}>
+    <NavigationContainer ref={NavigationService}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {user.isLoggedIn ? (
+        {isLoggedIn ? (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen

@@ -1,14 +1,14 @@
 import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {Container, Label, InputContainer, Error, Info} from './styles';
-import {useAddUserMutation} from '../../store/api';
+import {useAddUserMutation} from 'store/api/index';
 import {getUniqueId} from 'react-native-device-info';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {LoadingButton, RenderInputController} from '../../components';
-import {RegisterForm, User} from '../../types';
-import {setUser} from '../../store/slice/authSlice';
+import {LoadingButton, RenderInputController} from 'components/index';
+import {RegisterForm, User} from 'types/index';
+import {setAuthUser} from 'store/slice/authSlice';
 import {useDispatch} from 'react-redux';
 
 const registerSchema = yup.object().shape({
@@ -43,7 +43,7 @@ const Register = () => {
       email: email,
       DeviceId: deviceId,
     }).then(res => {
-      dispatch(setUser({isLoggedIn: true, userMeta: res?.data as User}));
+      dispatch(setAuthUser({isLoggedIn: true, userMeta: res?.data as User}));
     });
     reset();
   }; // function to call when user submit the form

@@ -4,11 +4,14 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {RenderInputController, RenderDateController} from '../../components';
-import {LoadingButton} from '../../components';
-import {useAddTaskMutation} from '../../store/api';
-import {TaskForm} from '../../types';
-import {navigationContainerRef} from '../../navigation';
+import {
+  RenderInputController,
+  RenderDateController,
+  LoadingButton,
+} from 'components/index';
+import {useAddTaskMutation} from 'store/api/index';
+import {TaskForm} from 'types/index';
+import {NavigationService} from 'navigation/index';
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -47,7 +50,7 @@ const NewTask = () => {
       date: date,
       isCompleted: isCompleted,
     }).then(res => {
-      navigationContainerRef.goBack();
+      NavigationService.goBack();
     });
     reset();
   }; // function to call when user submit the form

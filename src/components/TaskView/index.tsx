@@ -8,10 +8,10 @@ import {
   StyledIcon,
   IconWrapper,
 } from './styles';
-import {Task} from '../../types';
+import {Task} from 'types/index';
 import moment from 'moment';
-import DeleteModal from '../DeleteModal';
-import {navigationContainerRef} from '../../navigation';
+import {DeleteModal} from 'components/index';
+import {NavigationService} from 'navigation/index';
 type ItemViewProps = {
   item: Task;
   onPress: () => void;
@@ -38,7 +38,7 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
       </TextContainer>
       <>
         <IconWrapper
-          onPress={() => navigationContainerRef.navigate('Edit', {item: item})}>
+          onPress={() => NavigationService.navigate('Edit', {task: item})}>
           <StyledIcon name="edit-outline" fill={theme['color-primary-500']} />
         </IconWrapper>
         <IconWrapper>
