@@ -33,11 +33,9 @@ const App = () => {
   const [theme, setTheme] = useState(
     Appearance.getColorScheme() === 'dark' ? eva.dark : eva.light,
   );
-  useEffect(() => {
-    Appearance.addChangeListener(({colorScheme}) => {
-      setTheme(colorScheme === 'dark' ? eva.dark : eva.light);
-    });
-  }, []);
+  Appearance.addChangeListener(({colorScheme}) => {
+    setTheme(colorScheme === 'dark' ? eva.dark : eva.light);
+  });
 
   return (
     <Provider store={store}>
