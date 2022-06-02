@@ -1,5 +1,13 @@
 import React from 'react';
-import {Container, Label, InputContainer, Error, Info} from './styles';
+import {
+  Container,
+  Label,
+  InputContainer,
+  Error,
+  Info,
+  StyledCheckBox,
+  CheckBoxLabel,
+} from './styles';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -10,8 +18,20 @@ import {
   LoadingButton,
 } from 'components/index';
 import {useAddTaskMutation} from 'store/api/index';
-import {TaskForm} from 'types/index';
+import {Task, TaskForm} from 'types/index';
 import {NavigationService} from 'navigation/index';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {AddTaskToGoogleCalendar} from 'store/api/index';
+import {addToast} from 'utils/index';
+import {GOOGLE_CLIENT_ID} from '@env';
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_CLIENT_ID, // this is web client id (Not Android)
+  scopes: [
+    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/calendar.events',
+  ],
+});
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -19,7 +39,10 @@ const taskSchema = yup.object().shape({
   date: yup.date().required(),
   isCompleted: yup.boolean().required(),
 });
+
 const NewTask = () => {
+  console.log(GOOGLE_CLIENT_ID);
+  const [checked, setChecked] = React.useState<boolean>(false);
   const {
     control,
     setValue,
@@ -37,23 +60,52 @@ const NewTask = () => {
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
+
   const [addTask, {isError, error, isLoading}] = useAddTaskMutation();
-  const onSubmit = async ({
-    title,
-    description,
-    date,
-    isCompleted,
-  }: TaskForm) => {
+
+  const onSubmit = async () => {
+    try {
+      if (checked) {
+        await handleSignIn();
+        await createTask();
+      } else {
+        await createTask();
+      }
+    } catch (err: any) {
+      addToast(err.message, 'error');
+      console.log(err);
+    }
+  }; // function to call when user submit the form
+
+  const createTask = async () => {
     await addTask({
-      title: title,
-      description: description,
-      date: date,
-      isCompleted: isCompleted,
-    }).then(res => {
+      title: getValues().title,
+      description: getValues().description,
+      date: getValues().date,
+      isCompleted: false,
+    }).then(() => {
       NavigationService.goBack();
     });
     reset();
-  }; // function to call when user submit the form
+  };
+
+  const handleSignIn = async () => {
+    await GoogleSignin.hasPlayServices();
+    await GoogleSignin.signIn();
+    if (await GoogleSignin.isSignedIn()) {
+      const {accessToken} = await GoogleSignin.getTokens();
+      await AddTaskToGoogleCalendar(
+        {
+          title: getValues().title,
+          description: getValues().description,
+          date: getValues().date,
+        } as Task,
+        accessToken,
+      );
+    } else {
+      addToast("You're not signed in", 'error');
+    }
+  };
 
   return (
     <ScreenWrapper>
@@ -77,6 +129,9 @@ const NewTask = () => {
           />
           {errors.date && <Error>{errors.date.message}</Error>}
         </InputContainer>
+        <StyledCheckBox checked={checked} onChange={() => setChecked(!checked)}>
+          <CheckBoxLabel>Add to google calendar</CheckBoxLabel>
+        </StyledCheckBox>
         <LoadingButton
           label="Add Task"
           isLoading={isLoading}

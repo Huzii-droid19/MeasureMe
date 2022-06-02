@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import {User, Task} from 'types/index';
-import {BASE_URL} from '@env';
+import {BASE_URL, GOOGEL_CALENDAR_BASE_URL} from '@env';
 import {first, getCurrentUserId} from 'utils/index';
 import {store} from 'store/index';
 
@@ -60,3 +60,27 @@ export const {
   useEditTaskMutation,
   useDeleteTaskMutation,
 } = userApi;
+
+export const AddTaskToGoogleCalendar = async (
+  task: Task,
+  accessToken: string,
+) => {
+  fetch(GOOGEL_CALENDAR_BASE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      summary: task.title,
+      description: task.description,
+      start: {
+        dateTime: new Date(),
+      },
+      end: {
+        dateTime: task.date,
+      },
+    }),
+  });
+};
