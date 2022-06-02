@@ -13,6 +13,7 @@ module.exports = {
         'no-undef': 'off',
         'react-hooks/exhaustive-deps': 'warn',
       },
+      curly: 'off',
     },
   ],
 };

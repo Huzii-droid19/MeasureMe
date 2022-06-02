@@ -41,7 +41,6 @@ const taskSchema = yup.object().shape({
 });
 
 const NewTask = () => {
-  console.log(GOOGLE_CLIENT_ID);
   const [checked, setChecked] = React.useState<boolean>(false);
   const {
     control,
@@ -65,15 +64,10 @@ const NewTask = () => {
 
   const onSubmit = async () => {
     try {
-      if (checked) {
-        await handleSignIn();
-        await createTask();
-      } else {
-        await createTask();
-      }
+      if (checked) await handleSignIn();
+      await createTask();
     } catch (err: any) {
       addToast(err.message, 'error');
-      console.log(err);
     }
   }; // function to call when user submit the form
 
