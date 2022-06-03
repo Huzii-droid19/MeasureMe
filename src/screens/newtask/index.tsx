@@ -18,10 +18,10 @@ import {
   LoadingButton,
 } from 'components/index';
 import {useAddTaskMutation} from 'store/api/index';
-import {Task, TaskForm} from 'types/index';
+import {TaskForm} from 'types/index';
 import {NavigationService} from 'navigation/index';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {AddTaskToGoogleCalendar} from 'store/api/index';
+import {useAddTaskToGoogleCalendarMutation} from 'store/api/index';
 import {addToast} from 'utils/index';
 import {GOOGLE_CLIENT_ID} from '@env';
 
@@ -46,7 +46,6 @@ const NewTask = () => {
     control,
     setValue,
     getValues,
-    handleSubmit,
     formState: {errors, isValid},
     reset,
   } = useForm<TaskForm>({
@@ -61,6 +60,7 @@ const NewTask = () => {
   }); // form intialization
 
   const [addTask, {isError, error, isLoading}] = useAddTaskMutation();
+  const [AddTaskToGoogleCalendar] = useAddTaskToGoogleCalendarMutation();
 
   const onSubmit = async () => {
     try {
@@ -88,16 +88,16 @@ const NewTask = () => {
     await GoogleSignin.signIn();
     if (await GoogleSignin.isSignedIn()) {
       const {accessToken} = await GoogleSignin.getTokens();
-      await AddTaskToGoogleCalendar(
-        {
-          title: getValues().title,
-          description: getValues().description,
-          date: getValues().date,
-        } as Task,
-        accessToken,
-      );
-    } else {
-      addToast("You're not signed in", 'error');
+      const {title, description, date} = getValues();
+      await AddTaskToGoogleCalendar({
+        task: {
+          summary: title,
+          description: description,
+          start: {dateTime: new Date()},
+          end: {dateTime: date},
+        },
+        accessToken: accessToken,
+      });
     }
   };
 
@@ -130,7 +130,7 @@ const NewTask = () => {
           label="Add Task"
           isLoading={isLoading}
           disabled={!isValid}
-          onPress={handleSubmit(onSubmit)}
+          onPress={onSubmit}
           status="primary"
           appearance="filled"
         />

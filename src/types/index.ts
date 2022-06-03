@@ -29,3 +29,16 @@ export interface RootStackParamsList {
   NewTask: undefined;
   Register: undefined;
 }
+export interface CalendarApiParams {
+  task: {
+    summary: string;
+    description: string;
+    start: {
+      dateTime: Date;
+    };
+    end: {
+      dateTime: Date;
+    };
+  };
+  accessToken: string;
+}
