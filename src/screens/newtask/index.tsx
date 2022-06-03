@@ -92,11 +92,11 @@ const NewTask = () => {
       await AddTaskToGoogleCalendar({
         task: {
           summary: title,
-          description: description,
+          description,
           start: {dateTime: new Date()},
           end: {dateTime: date},
         },
-        accessToken: accessToken,
+        accessToken,
       });
     }
   };

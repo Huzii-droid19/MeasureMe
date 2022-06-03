@@ -15,13 +15,13 @@ import Toast from 'react-native-toast-message';
 import {ThemeProvider} from 'styled-components';
 import {setAuthUser} from 'store/slice/authSlice';
 import {useDispatch} from 'react-redux';
-import * as R from 'ramda';
+import {isEmpty} from 'ramda';
 
 const Index = () => {
   const {isSuccess, isLoading, data} = useGetUserByDeviceIdQuery(getUniqueId());
   const dispatch = useDispatch();
   useEffect(() => {
-    if (isSuccess && !R.isEmpty(data)) {
+    if (isSuccess && !isEmpty(data)) {
       dispatch(setAuthUser({isLoggedIn: true, userMeta: data}));
     }
     SplashScreen.hide();

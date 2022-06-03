@@ -1,8 +1,8 @@
 import {User} from 'types/index';
 import Toast from 'react-native-toast-message';
-import * as R from 'ramda';
+import {ifElse, isEmpty, always, head} from 'ramda';
 
-const firstOrEmpty = R.ifElse(R.isEmpty, R.always([]), R.head);
+const firstOrEmpty = ifElse(isEmpty, always([]), head);
 
 export const first = (item: Array<User>) => {
   return firstOrEmpty(item);
