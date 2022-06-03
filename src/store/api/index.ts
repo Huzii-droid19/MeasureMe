@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {User, Task} from 'types/index';
-import {BASE_URL} from '@env';
+import {User, Task, CalendarApiParams} from 'types/index';
+import {BASE_URL, GOOGEL_CALENDAR_BASE_URL} from '@env';
 import {first, getCurrentUserId} from 'utils/index';
 import {store} from 'store/index';
 
@@ -52,6 +52,27 @@ export const userApi = createApi({
   }),
 });
 
+export const calendarApi = createApi({
+  reducerPath: 'calendarApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: GOOGEL_CALENDAR_BASE_URL,
+  }),
+  endpoints: builder => ({
+    addTaskToGoogleCalendar: builder.mutation<Object, CalendarApiParams>({
+      query: params => ({
+        url: `calendars/primary/events`,
+        method: 'POST',
+        body: params.task,
+        headers: {
+          Authorization: `Bearer ${params.accessToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }),
+    }),
+  }),
+});
+
 export const {
   useGetTasksQuery,
   useGetUserByDeviceIdQuery,
@@ -60,3 +81,5 @@ export const {
   useEditTaskMutation,
   useDeleteTaskMutation,
 } = userApi;
+
+export const {useAddTaskToGoogleCalendarMutation} = calendarApi;

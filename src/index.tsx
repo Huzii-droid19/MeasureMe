@@ -15,7 +15,7 @@ import Toast from 'react-native-toast-message';
 import {ThemeProvider} from 'styled-components';
 import {setAuthUser} from 'store/slice/authSlice';
 import {useDispatch} from 'react-redux';
-import {isEmpty} from 'utils/index';
+import {isEmpty} from 'ramda';
 
 const Index = () => {
   const {isSuccess, isLoading, data} = useGetUserByDeviceIdQuery(getUniqueId());

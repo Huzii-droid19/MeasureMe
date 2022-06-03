@@ -1,5 +1,13 @@
 import React from 'react';
-import {Container, Label, InputContainer, Error, Info} from './styles';
+import {
+  Container,
+  Label,
+  InputContainer,
+  Error,
+  Info,
+  StyledCheckBox,
+  CheckBoxLabel,
+} from './styles';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -12,6 +20,18 @@ import {
 import {useAddTaskMutation} from 'store/api/index';
 import {TaskForm} from 'types/index';
 import {NavigationService} from 'navigation/index';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {useAddTaskToGoogleCalendarMutation} from 'store/api/index';
+import {addToast} from 'utils/index';
+import {GOOGLE_CLIENT_ID} from '@env';
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_CLIENT_ID, // this is web client id (Not Android)
+  scopes: [
+    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/calendar.events',
+  ],
+});
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -19,12 +39,13 @@ const taskSchema = yup.object().shape({
   date: yup.date().required(),
   isCompleted: yup.boolean().required(),
 });
+
 const NewTask = () => {
+  const [checked, setChecked] = React.useState<boolean>(false);
   const {
     control,
     setValue,
     getValues,
-    handleSubmit,
     formState: {errors, isValid},
     reset,
   } = useForm<TaskForm>({
@@ -37,23 +58,48 @@ const NewTask = () => {
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
+
   const [addTask, {isError, error, isLoading}] = useAddTaskMutation();
-  const onSubmit = async ({
-    title,
-    description,
-    date,
-    isCompleted,
-  }: TaskForm) => {
+  const [AddTaskToGoogleCalendar] = useAddTaskToGoogleCalendarMutation();
+
+  const onSubmit = async () => {
+    try {
+      if (checked) await handleSignIn();
+      await createTask();
+    } catch (err: any) {
+      addToast(err.message, 'error');
+    }
+  }; // function to call when user submit the form
+
+  const createTask = async () => {
     await addTask({
-      title: title,
-      description: description,
-      date: date,
-      isCompleted: isCompleted,
-    }).then(res => {
+      title: getValues().title,
+      description: getValues().description,
+      date: getValues().date,
+      isCompleted: false,
+    }).then(() => {
       NavigationService.goBack();
     });
     reset();
-  }; // function to call when user submit the form
+  };
+
+  const handleSignIn = async () => {
+    await GoogleSignin.hasPlayServices();
+    await GoogleSignin.signIn();
+    if (await GoogleSignin.isSignedIn()) {
+      const {accessToken} = await GoogleSignin.getTokens();
+      const {title, description, date} = getValues();
+      await AddTaskToGoogleCalendar({
+        task: {
+          summary: title,
+          description,
+          start: {dateTime: new Date()},
+          end: {dateTime: date},
+        },
+        accessToken,
+      });
+    }
+  };
 
   return (
     <ScreenWrapper>
@@ -77,11 +123,14 @@ const NewTask = () => {
           />
           {errors.date && <Error>{errors.date.message}</Error>}
         </InputContainer>
+        <StyledCheckBox checked={checked} onChange={() => setChecked(!checked)}>
+          <CheckBoxLabel>Add to google calendar</CheckBoxLabel>
+        </StyledCheckBox>
         <LoadingButton
           label="Add Task"
           isLoading={isLoading}
           disabled={!isValid}
-          onPress={handleSubmit(onSubmit)}
+          onPress={onSubmit}
           status="primary"
           appearance="filled"
         />
