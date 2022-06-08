@@ -69,7 +69,6 @@ const NewTask = ({navigation}) => {
     try {
       if (checked) {
         const {title, description, date} = getValues();
-        console.log(isMeetUpAdded);
         const accessToken = (await signInToGoogle()) as string;
         const {data, error} = (await addTaskToGoogleCalendar({
           task: {
