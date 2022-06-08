@@ -1,7 +1,7 @@
 import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {Container, Label, InputContainer, Error, Info} from './styles';
-import {useAddUserMutation} from 'store/api/index';
+import {Todo} from 'store/api/index';
 import {getUniqueId} from 'react-native-device-info';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
@@ -20,6 +20,7 @@ const registerSchema = yup.object().shape({
 });
 
 const Register = () => {
+  const {useAddUserMutation} = Todo;
   const dispatch = useDispatch();
   const {
     control,
@@ -53,9 +54,17 @@ const Register = () => {
       <Container>
         <Label category="label">Register</Label>
         <InputContainer>
-          <RenderInputController label="Name" inputControl={control} />
+          <RenderInputController
+            name="Name"
+            inputControl={control}
+            placeholder="Your name"
+          />
           {errors.name && <Error>{errors.name.message}</Error>}
-          <RenderInputController label="Email" inputControl={control} />
+          <RenderInputController
+            name="Email"
+            inputControl={control}
+            placeholder="Your email"
+          />
           {errors.email && <Error>{errors.email.message}</Error>}
         </InputContainer>
         <LoadingButton

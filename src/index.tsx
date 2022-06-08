@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 import {store} from 'store/index';
 import Navigation from 'navigation/index';
 import SplashScreen from 'react-native-splash-screen';
-import {useGetUserByDeviceIdQuery} from 'store/api/index';
+import {Todo} from 'store/api/index';
 import {getUniqueId} from 'react-native-device-info';
 import {Appearance} from 'react-native';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
@@ -18,6 +18,7 @@ import {useDispatch} from 'react-redux';
 import {isEmpty} from 'ramda';
 
 const Index = () => {
+  const {useGetUserByDeviceIdQuery} = Todo;
   const {isSuccess, isLoading, data} = useGetUserByDeviceIdQuery(getUniqueId());
   const dispatch = useDispatch();
   useEffect(() => {

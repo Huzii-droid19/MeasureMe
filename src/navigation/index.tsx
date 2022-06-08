@@ -22,6 +22,7 @@ export const NavigationService =
 
 const Navigation = () => {
   const theme = useTheme();
+
   const options = {
     headerShown: true,
     title: '',

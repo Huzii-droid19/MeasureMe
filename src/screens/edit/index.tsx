@@ -12,7 +12,7 @@ import * as yup from 'yup';
 import {TaskForm, Task} from 'types/index';
 import {RouteProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
-import {useEditTaskMutation} from 'store/api/index';
+import {Todo} from 'store/api/index';
 import {NavigationService} from 'navigation/index';
 
 type EditScreenProps = {
@@ -20,6 +20,7 @@ type EditScreenProps = {
 };
 
 const EditTask = ({route}: EditScreenProps) => {
+  const {useEditTaskMutation} = Todo;
   const {task}: {task: Task} = route.params;
   const taskSchema = yup.object().shape({
     title: yup
@@ -81,17 +82,21 @@ const EditTask = ({route}: EditScreenProps) => {
       <Container>
         <Label>Edit Task</Label>
         <InputContainer>
-          <RenderInputController label="Title" inputControl={control} />
+          <RenderInputController
+            name="title"
+            inputControl={control}
+            placeholder="Title"
+          />
           {errors.title && <Error>{errors.title.message}</Error>}
           <RenderInputController
-            label="Description"
+            name="description"
             inputControl={control}
             multiline={true}
-            minHeight={64}
+            placeholder="Description"
           />
           {errors.description && <Error>{errors.description.message}</Error>}
           <RenderDateController
-            label="Deadline"
+            name="date"
             inputControl={control}
             setValue={setValue}
             getValues={getValues}
@@ -99,6 +104,8 @@ const EditTask = ({route}: EditScreenProps) => {
           {errors.date && <Error>{errors.date.message}</Error>}
         </InputContainer>
         <LoadingButton
+          size="medium"
+          width="45%"
           label="Edit Task"
           onPress={handleSubmit(onSubmit)}
           isLoading={isLoading}

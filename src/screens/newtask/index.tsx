@@ -1,12 +1,10 @@
-import React from 'react';
+import React, {useLayoutEffect} from 'react';
 import {
   Container,
-  Label,
-  InputContainer,
   Error,
-  Info,
   StyledCheckBox,
   CheckBoxLabel,
+  StyledIcon,
 } from './styles';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
@@ -16,14 +14,16 @@ import {
   RenderInputController,
   RenderDateController,
   LoadingButton,
+  MeetupButton,
 } from 'components/index';
-import {useAddTaskMutation} from 'store/api/index';
+import {Todo, Calendar} from 'store/api/index';
 import {TaskForm} from 'types/index';
-import {NavigationService} from 'navigation/index';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useAddTaskToGoogleCalendarMutation} from 'store/api/index';
 import {addToast} from 'utils/index';
 import {GOOGLE_CLIENT_ID} from '@env';
+import {ImageProps, StyleProp, TextStyle} from 'react-native';
+import {useTheme} from '@ui-kitten/components';
+import {signInToGoogle} from 'config/index';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID, // this is web client id (Not Android)
@@ -37,11 +37,17 @@ const taskSchema = yup.object().shape({
   title: yup.string().required(),
   description: yup.string().required(),
   date: yup.date().required(),
-  isCompleted: yup.boolean().required(),
+  isCompleted: yup.boolean(),
 });
 
-const NewTask = () => {
+const NewTask = ({navigation}) => {
+  const {useAddTaskMutation} = Todo;
+  const {useAddTaskToGoogleCalendarMutation} = Calendar;
   const [checked, setChecked] = React.useState<boolean>(false);
+  const [isMeetUpAdded, setIsMeetUpAdded] = React.useState<boolean>(false);
+  const [addTask, {isLoading: taskLoader}] = useAddTaskMutation();
+  const [addTaskToGoogleCalendar, {isLoading: googleLoader}] =
+    useAddTaskToGoogleCalendarMutation();
   const {
     control,
     setValue,
@@ -50,91 +56,133 @@ const NewTask = () => {
     reset,
   } = useForm<TaskForm>({
     defaultValues: {
-      title: '',
-      description: '',
-      date: new Date(),
+      title: undefined,
+      description: undefined,
+      date: new Date(new Date().getTime() + 86400000),
       isCompleted: false,
     },
     resolver: yupResolver(taskSchema),
     mode: 'all',
   }); // form intialization
 
-  const [addTask, {isError, error, isLoading}] = useAddTaskMutation();
-  const [AddTaskToGoogleCalendar] = useAddTaskToGoogleCalendarMutation();
-
   const onSubmit = async () => {
     try {
-      if (checked) await handleSignIn();
-      await createTask();
+      if (checked) {
+        const {title, description, date} = getValues();
+        console.log(isMeetUpAdded);
+        const accessToken = (await signInToGoogle()) as string;
+        const {data, error} = (await addTaskToGoogleCalendar({
+          task: {
+            summary: title,
+            description: description,
+            start: {
+              dateTime: new Date(),
+            },
+            end: {
+              dateTime: date,
+            },
+            conferenceData: isMeetUpAdded
+              ? {
+                  createRequest: {
+                    conferenceSolutionKey: {
+                      type: 'hangoutsMeet',
+                    },
+                    requestId: Math.random().toString(36).substring(2),
+                  },
+                }
+              : {},
+          },
+          accessToken,
+        })) as any;
+        if (error) {
+          throw new Error(error);
+        }
+        await createTask(data?.id);
+      } else await createTask();
+      reset();
+      setChecked(false);
     } catch (err: any) {
       addToast(err.message, 'error');
     }
-  }; // function to call when user submit the form
+  };
 
-  const createTask = async () => {
+  const createTask = async (eventId = '') => {
+    const {title, description, date, isCompleted} = getValues();
     await addTask({
-      title: getValues().title,
-      description: getValues().description,
-      date: getValues().date,
-      isCompleted: false,
-    }).then(() => {
-      NavigationService.goBack();
+      title: title,
+      description: description,
+      date: date,
+      isCompleted: isCompleted,
+      eventId: eventId,
     });
-    reset();
+    navigation.goBack();
   };
 
-  const handleSignIn = async () => {
-    await GoogleSignin.hasPlayServices();
-    await GoogleSignin.signIn();
-    if (await GoogleSignin.isSignedIn()) {
-      const {accessToken} = await GoogleSignin.getTokens();
-      const {title, description, date} = getValues();
-      await AddTaskToGoogleCalendar({
-        task: {
-          summary: title,
-          description,
-          start: {dateTime: new Date()},
-          end: {dateTime: date},
-        },
-        accessToken,
-      });
-    }
-  };
+  const titleTextStyle = {
+    fontSize: 25,
+    fontWeight: '600',
+    minHeight: 64,
+    paddingLeft: 40,
+  } as StyleProp<TextStyle>;
+  const descriptionTextStyle = {
+    fontSize: 16,
+    minHeight: 64,
+    fontWeight: '400',
+  } as StyleProp<TextStyle>;
 
-  return (
-    <ScreenWrapper>
-      <Container>
-        <Label category="label">Add New Task</Label>
-        <InputContainer>
-          <RenderInputController label="Title" inputControl={control} />
-          {errors.title && <Error>{errors.title.message}</Error>}
-          <RenderInputController
-            label="Description"
-            inputControl={control}
-            multiline={true}
-            minHeight={64}
-          />
-          {errors.description && <Error>{errors.description.message}</Error>}
-          <RenderDateController
-            label="Deadline"
-            inputControl={control}
-            setValue={setValue}
-            getValues={getValues}
-          />
-          {errors.date && <Error>{errors.date.message}</Error>}
-        </InputContainer>
-        <StyledCheckBox checked={checked} onChange={() => setChecked(!checked)}>
-          <CheckBoxLabel>Add to google calendar</CheckBoxLabel>
-        </StyledCheckBox>
+  const theme = useTheme();
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
         <LoadingButton
+          size="small"
           label="Add Task"
-          isLoading={isLoading}
+          isLoading={taskLoader || googleLoader}
           disabled={!isValid}
           onPress={onSubmit}
           status="primary"
           appearance="filled"
         />
-        <Info>{isError && <Error>{error}</Error>}</Info>
+      ),
+    });
+  }, [isValid, taskLoader, googleLoader, checked, isMeetUpAdded]);
+
+  return (
+    <ScreenWrapper
+      barStyle="dark-content"
+      statusBarColor={theme['background-basic-color-1']}>
+      <Container>
+        <RenderInputController
+          name="title"
+          inputControl={control}
+          textStyle={titleTextStyle}
+          placeholder="Add title"
+        />
+        <Error>{errors.title && errors.title.message}</Error>
+        <RenderInputController
+          name="description"
+          inputControl={control}
+          multiline={true}
+          textStyle={descriptionTextStyle}
+          placeholder="Add description"
+          accessoryLeft={(props: ImageProps) => (
+            <StyledIcon {...props} name="menu-2-outline" />
+          )}
+        />
+        <Error>{errors.description && errors.description.message}</Error>
+        <RenderDateController
+          name="date"
+          inputControl={control}
+          setValue={setValue}
+          getValues={getValues}
+        />
+        <Error>{errors.date && errors.date.message}</Error>
+        <StyledCheckBox checked={checked} onChange={() => setChecked(!checked)}>
+          <CheckBoxLabel>Add to google calendar</CheckBoxLabel>
+        </StyledCheckBox>
+        {checked && (
+          <MeetupButton meet={isMeetUpAdded} setMeet={setIsMeetUpAdded} />
+        )}
       </Container>
     </ScreenWrapper>
   );

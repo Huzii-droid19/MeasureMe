@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyledButton} from './styles';
-import {Spinner} from '@ui-kitten/components';
+import Loader from 'components/Loader';
 
 interface LoadingButtonProps {
   label: string;
@@ -9,11 +9,9 @@ interface LoadingButtonProps {
   onPress: () => void;
   status?: 'primary' | 'success' | 'info' | 'warning' | 'danger';
   appearance?: 'filled' | 'outline' | 'ghost';
+  size?: 'small' | 'medium' | 'large';
+  width?: string | number;
 }
-
-const SpinnerComponent = () => (
-  <Spinner size="small" animating={true} status="info" />
-);
 
 const LoadingButton = ({
   label,
@@ -22,12 +20,16 @@ const LoadingButton = ({
   disabled,
   status,
   appearance,
+  size,
+  width,
 }: LoadingButtonProps) => {
   return (
     <>
+      {isLoading && <Loader />}
       <StyledButton
+        width={width}
+        size={size}
         disabled={disabled}
-        accessoryLeft={isLoading && SpinnerComponent}
         onPress={onPress}
         status={status}
         appearance={appearance}>

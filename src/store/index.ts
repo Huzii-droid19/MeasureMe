@@ -1,18 +1,21 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {setupListeners} from '@reduxjs/toolkit/query';
-import {userApi, calendarApi} from './api';
+import {Todo, Calendar} from './api';
 import authSlice from './slice/authSlice';
+
+const {TodoApi} = Todo;
+const {CalendarApi} = Calendar;
 
 export const store = configureStore({
   reducer: {
-    [userApi.reducerPath]: userApi.reducer,
-    [calendarApi.reducerPath]: calendarApi.reducer,
+    [TodoApi.reducerPath]: TodoApi.reducer,
+    [CalendarApi.reducerPath]: CalendarApi.reducer,
     auth: authSlice,
   },
   middleware: getDefaultMiddleware => [
     ...getDefaultMiddleware(),
-    userApi.middleware,
-    calendarApi.middleware,
+    TodoApi.middleware,
+    CalendarApi.middleware,
   ],
 });
 

@@ -1,11 +1,11 @@
 import styled from 'styled-components/native';
-import {CheckBox, Layout, Text} from '@ui-kitten/components';
+import {CheckBox, Icon, Layout, Text} from '@ui-kitten/components';
 
 export const Container = styled(Layout)({
   flex: 1,
   flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
 });
 export const Label = styled(Text)({
   marginTop: 10,
@@ -15,17 +15,13 @@ export const Label = styled(Text)({
 });
 export const InputContainer = styled(Layout)({
   flexDirection: 'column',
-  alignItems: 'flex-end',
-  justifyContent: 'center',
-  width: '90%',
+  width: '100%',
 });
 export const Error = styled(Text)({
   fontSize: 12,
   fontWeight: 600,
   color: 'red',
-});
-export const Info = styled(Layout)({
-  marginTop: 20,
+  marginLeft: 20,
 });
 export const StyledCheckBox = styled(CheckBox)({
   alignSelf: 'flex-start',
@@ -37,3 +33,7 @@ export const CheckBoxLabel = styled(Text)({
   fontSize: 16,
   fontWeight: 'bold',
 });
+export const StyledIcon = styled(Icon)(({theme}) => ({
+  height: 20,
+  width: 20,
+}));

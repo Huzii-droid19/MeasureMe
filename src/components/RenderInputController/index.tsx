@@ -1,37 +1,40 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {Controller} from 'react-hook-form';
 import {StyledInput, InputLabel} from './styles';
+import {ImageProps, StyleProp, TextStyle} from 'react-native';
 
 type InputControllerProps = {
-  label: string;
+  name: string;
   inputControl: any;
   multiline?: boolean;
-  minHeight?: number;
+  textStyle?: StyleProp<TextStyle>;
+  accessoryLeft?: (props: ImageProps) => ReactElement;
+  placeholder?: string;
 };
 
 const RenderController = ({
-  label,
+  name,
   inputControl,
   multiline,
-  minHeight,
+  textStyle,
+  accessoryLeft,
+  placeholder,
 }: InputControllerProps) => {
   return (
     <Controller
       control={inputControl}
       render={({field: {onChange, onBlur, value}}) => (
         <StyledInput
-          textStyle={multiline ? {minHeight: minHeight} : {}}
+          textStyle={textStyle}
           multiline={multiline}
-          label={() => {
-            return <InputLabel>{label}</InputLabel>;
-          }}
-          placeholder={label}
+          placeholder={placeholder}
           value={value}
           onChangeText={onChange}
           onBlur={onBlur}
+          accessoryLeft={accessoryLeft}
         />
       )}
-      name={label.toLocaleLowerCase()}
+      name={name.toLocaleLowerCase()}
     />
   );
 };
