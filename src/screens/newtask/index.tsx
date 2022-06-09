@@ -17,7 +17,7 @@ import {
   MeetupButton,
 } from 'components/index';
 import {Todo, Calendar} from 'store/api/index';
-import {TaskForm} from 'types/index';
+import {TaskForm, MeetButtonParams} from 'types/index';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {addToast} from 'utils/index';
 import {GOOGLE_CLIENT_ID} from '@env';
@@ -44,7 +44,11 @@ const NewTask = ({navigation}) => {
   const {useAddTaskMutation} = Todo;
   const {useAddTaskToGoogleCalendarMutation} = Calendar;
   const [checked, setChecked] = React.useState<boolean>(false);
-  const [isMeetUpAdded, setIsMeetUpAdded] = React.useState<boolean>(false);
+  const [isMeetUpAdded, setIsMeetUpAdded] = React.useState<MeetButtonParams>({
+    isAdded: false,
+    iconName: 'video-off-outline',
+    meetUpText: 'Add video conference',
+  });
   const [addTask, {isLoading: taskLoader}] = useAddTaskMutation();
   const [addTaskToGoogleCalendar, {isLoading: googleLoader}] =
     useAddTaskToGoogleCalendarMutation();
@@ -80,7 +84,7 @@ const NewTask = ({navigation}) => {
             end: {
               dateTime: date,
             },
-            conferenceData: isMeetUpAdded
+            conferenceData: isMeetUpAdded.isAdded
               ? {
                   createRequest: {
                     conferenceSolutionKey: {

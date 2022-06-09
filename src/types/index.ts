@@ -44,3 +44,9 @@ export interface CalendarApiParams {
   };
   accessToken: string;
 }
+
+export interface MeetButtonParams {
+  isAdded: boolean;
+  iconName: string;
+  meetUpText: string;
+}
