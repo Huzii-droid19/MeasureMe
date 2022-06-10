@@ -27,7 +27,6 @@ export const StyledIcon = styled(Icon)({
 export const TaskCalendar = styled(Calendar)({
   width: width,
 });
-
 export const TaskList = styled(FlatList)({
   paddingTop: 10,
   paddingBottom: 20,
@@ -40,5 +39,5 @@ export const FloatingButton = styled(Button)({
   width: 50,
   height: 50,
   borderRadius: 25,
-  elevation: '5',
+  elevation: '10',
 });

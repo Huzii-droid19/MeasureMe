@@ -1,7 +1,7 @@
 import React from 'react';
 import {Container, DeleteText, ButtonContainer} from './style';
 import {Modal, Card} from '@ui-kitten/components';
-import {useDeleteTaskMutation} from 'store/api/index';
+import {Todo} from 'store/api/index';
 import {Task} from 'types/index';
 import {LoadingButton} from 'components/index';
 import {NavigationService} from 'navigation/index';
@@ -21,6 +21,7 @@ const DeleteModal = ({
   backdropStyle,
   task,
 }: ModalProps) => {
+  const {useDeleteTaskMutation} = Todo;
   const [deleteTask, {isLoading}] = useDeleteTaskMutation();
   const onDelete = async () => {
     await deleteTask(task).then(res => {
@@ -39,6 +40,8 @@ const DeleteModal = ({
           <DeleteText>Are you sure you want to delete this task?</DeleteText>
           <ButtonContainer>
             <LoadingButton
+              size="medium"
+              width="45%"
               label="Delete"
               onPress={onDelete}
               status="danger"
@@ -46,6 +49,8 @@ const DeleteModal = ({
               appearance="outline"
             />
             <LoadingButton
+              size="medium"
+              width="45%"
               label="Cancel"
               onPress={onClose}
               status="primary"

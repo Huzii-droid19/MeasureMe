@@ -1,14 +1,11 @@
 import styled from 'styled-components';
-import {Dimensions} from 'react-native';
-import {Layout} from '@ui-kitten/components';
+import {Modal} from '@ui-kitten/components';
 
-const {height, width} = Dimensions.get('window');
-
-export const Container = styled(Layout)({
+export const StyledModal = styled(Modal)({
   flex: 1,
-  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  height: height,
-  width: width,
+  height: '100%',
+  width: '100%',
+  backgroundColor: 'transparent',
 });

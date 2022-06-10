@@ -11,17 +11,11 @@ export interface Task {
   date: Date;
   isCompleted: boolean;
   userId: number;
+  eventId: string;
 }
-export interface TaskForm {
-  title: string;
-  description: string;
-  date: Date;
-  isCompleted: Boolean;
-}
-export interface RegisterForm {
-  email: string;
-  name: string;
-}
+export interface TaskForm extends Omit<Task, 'id' | 'userId'> {}
+export interface RegisterForm extends Omit<User, 'id'> {}
+
 export interface RootStackParamsList {
   Home: undefined;
   Details: {task: Task};
@@ -38,6 +32,14 @@ export interface CalendarApiParams {
     };
     end: {
       dateTime: Date;
+    };
+    conferenceData?: {
+      createRequest?: {
+        requestId: string;
+        conferenceSolutionKey: {
+          type: string;
+        };
+      };
     };
   };
   accessToken: string;

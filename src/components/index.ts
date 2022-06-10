@@ -6,3 +6,4 @@ export {default as RenderDateController} from './RenderDateController';
 export {default as LoadingButton} from './LoadingButton';
 export {default as DeleteModal} from './DeleteModal';
 export {default as Header} from './Header';
+export {default as MeetupButton} from './MeetupButton';

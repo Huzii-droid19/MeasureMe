@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {useGetTasksQuery} from 'store/api/index';
+import {Todo} from 'store/api/index';
 import {
   Container,
   CalendarView,
@@ -10,7 +10,7 @@ import {
   TaskList,
   FloatingButton,
 } from './styles';
-import {TaskView, Loader, EmptyListComponent, Header} from 'components/index';
+import {TaskView, EmptyListComponent, Header} from 'components/index';
 import {Task} from 'types/index';
 import {useTheme} from '@ui-kitten/components';
 import moment from 'moment';
@@ -18,8 +18,9 @@ import {DateData} from 'react-native-calendars';
 import {NavigationService} from 'navigation/index';
 
 const Home = () => {
+  const {useGetTasksQuery} = Todo;
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
-  const {data: tasks, isSuccess, isLoading, refetch} = useGetTasksQuery();
+  const {data: tasks, isLoading, refetch} = useGetTasksQuery();
   const [filteredData, setFilteredData] = useState(tasks);
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [search, setSearch] = useState('');
@@ -97,7 +98,6 @@ const Home = () => {
             search={search}
             onSearch={onSearch}
           />
-
           <CalendarView style={ViewProps}>
             <TaskCalendar
               enableSwipeMonths={true}
@@ -113,20 +113,15 @@ const Home = () => {
             />
           </CalendarView>
         </>
-
-        {isSuccess ? (
-          <TaskList
-            data={filteredData}
-            renderItem={renderItemCall}
-            keyExtractor={(item: Task) => item.id.toString()}
-            refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={renderEmptyList}
-          />
-        ) : (
-          <Loader />
-        )}
+        <TaskList
+          data={filteredData}
+          renderItem={renderItemCall}
+          keyExtractor={(item: Task) => item.id.toString()}
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          }
+          ListEmptyComponent={!isLoading && renderEmptyList}
+        />
         <FloatingButton
           onPress={() => NavigationService.navigate('NewTask')}
           accessoryLeft={(props: any) => (

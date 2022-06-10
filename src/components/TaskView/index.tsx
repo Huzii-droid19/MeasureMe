@@ -27,28 +27,22 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   };
   return (
-    <Container theme={theme['color-primary-default']}>
+    <Container isCompleted={item.isCompleted}>
       <TextContainer onPress={onPress}>
-        <Title>{item.title}</Title>
+        <Title isCompleted={item.isCompleted}>{item.title}</Title>
         <Description>
           {item.description.slice(0, 30) +
             (item.description.length > 30 ? '...' : '')}
         </Description>
         <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>
-      <>
-        <IconWrapper
-          onPress={() => NavigationService.navigate('Edit', {task: item})}>
-          <StyledIcon name="edit-outline" fill={theme['color-primary-500']} />
-        </IconWrapper>
-        <IconWrapper>
-          <StyledIcon
-            name="trash-2-outline"
-            fill={theme['color-danger-500']}
-            onPress={() => setVisible(!visible)}
-          />
-        </IconWrapper>
-      </>
+      <IconWrapper
+        onPress={() => NavigationService.navigate('Edit', {task: item})}>
+        <StyledIcon name="edit-outline" fill={theme['color-primary-500']} />
+      </IconWrapper>
+      <IconWrapper onPress={() => setVisible(!visible)}>
+        <StyledIcon name="trash-2-outline" fill={theme['color-danger-500']} />
+      </IconWrapper>
       <DeleteModal
         visible={visible}
         onClose={onClose}

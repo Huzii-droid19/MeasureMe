@@ -17,7 +17,7 @@ import {NavigationProp, RouteProp} from '@react-navigation/native';
 import moment from 'moment';
 import {DeleteModal, LoadingButton} from 'components/index';
 import {useTheme} from '@ui-kitten/components';
-import {useEditTaskMutation} from 'store/api/index';
+import {Todo} from 'store/api/index';
 import Toast from 'react-native-toast-message';
 
 type DetailsScreenProps = {
@@ -26,6 +26,7 @@ type DetailsScreenProps = {
 };
 
 const Details = ({navigation, route}: DetailsScreenProps) => {
+  const {useEditTaskMutation} = Todo;
   const {task}: {task: Task} = route.params;
   const [visible, setVisible] = React.useState(false);
   const theme = useTheme();
