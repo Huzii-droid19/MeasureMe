@@ -65,6 +65,7 @@ export const createTask = async (
   getValues: UseFormGetValues<TaskForm>,
   addTask: any,
   eventId = '' as string,
+  hangoutLink = '' as string,
 ) => {
   try {
     const {title, description, date, isCompleted} = getValues();
@@ -74,6 +75,7 @@ export const createTask = async (
       date: date,
       isCompleted: isCompleted,
       eventId: eventId,
+      hangoutLink: hangoutLink,
     });
   } catch (err: any) {
     addToast(err.message, 'error');

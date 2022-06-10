@@ -24,7 +24,7 @@ const DeleteModal = ({
   const {useDeleteTaskMutation} = Todo;
   const [deleteTask, {isLoading}] = useDeleteTaskMutation();
   const onDelete = async () => {
-    await deleteTask(task).then(res => {
+    await deleteTask(task).then(() => {
       onClose();
       NavigationService.navigate('Home');
     });
