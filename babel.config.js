@@ -16,7 +16,7 @@ module.exports = {
           store: './src/store',
           types: './src/types',
           utils: './src/utils',
-          config: './src/config',
+          services: './src/services',
         },
       },
     ],

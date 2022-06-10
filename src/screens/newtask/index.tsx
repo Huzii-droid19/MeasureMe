@@ -17,21 +17,10 @@ import {
   MeetupButton,
 } from 'components/index';
 import {Todo, Calendar} from 'store/api/index';
-import {TaskForm, MeetButtonParams} from 'types/index';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {addToast} from 'utils/index';
-import {GOOGLE_CLIENT_ID} from '@env';
+import {TaskForm} from 'types/index';
 import {ImageProps, StyleProp, TextStyle} from 'react-native';
 import {useTheme} from '@ui-kitten/components';
-import {signInToGoogle} from 'config/index';
-
-GoogleSignin.configure({
-  webClientId: GOOGLE_CLIENT_ID, // this is web client id (Not Android)
-  scopes: [
-    'https://www.googleapis.com/auth/calendar',
-    'https://www.googleapis.com/auth/calendar.events',
-  ],
-});
+import {createEvent, createTask} from 'services/index';
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -41,17 +30,14 @@ const taskSchema = yup.object().shape({
 });
 
 const NewTask = ({navigation}) => {
-  const {useAddTaskMutation} = Todo;
-  const {useAddTaskToGoogleCalendarMutation} = Calendar;
-  const [checked, setChecked] = React.useState<boolean>(false);
-  const [isMeetUpAdded, setIsMeetUpAdded] = React.useState<MeetButtonParams>({
-    isAdded: false,
-    iconName: 'video-off-outline',
-    meetUpText: 'Add video conference',
+  const theme = useTheme();
+  const [addTask, {isLoading: taskLoader}] = Todo.useAddTaskMutation();
+  const [googleCalendarState, setGoogleCalendarState] = React.useState({
+    isEventAdded: false,
+    isMeetupAdded: false,
   });
-  const [addTask, {isLoading: taskLoader}] = useAddTaskMutation();
   const [addTaskToGoogleCalendar, {isLoading: googleLoader}] =
-    useAddTaskToGoogleCalendarMutation();
+    Calendar.useAddTaskToGoogleCalendarMutation();
   const {
     control,
     setValue,
@@ -60,8 +46,8 @@ const NewTask = ({navigation}) => {
     reset,
   } = useForm<TaskForm>({
     defaultValues: {
-      title: undefined,
-      description: undefined,
+      title: '',
+      description: '',
       date: new Date(new Date().getTime() + 86400000),
       isCompleted: false,
     },
@@ -70,54 +56,20 @@ const NewTask = ({navigation}) => {
   }); // form intialization
 
   const onSubmit = async () => {
-    try {
-      if (checked) {
-        const {title, description, date} = getValues();
-        const accessToken = (await signInToGoogle()) as string;
-        const {data, error} = (await addTaskToGoogleCalendar({
-          task: {
-            summary: title,
-            description: description,
-            start: {
-              dateTime: new Date(),
-            },
-            end: {
-              dateTime: date,
-            },
-            conferenceData: isMeetUpAdded.isAdded
-              ? {
-                  createRequest: {
-                    conferenceSolutionKey: {
-                      type: 'hangoutsMeet',
-                    },
-                    requestId: Math.random().toString(36).substring(2),
-                  },
-                }
-              : {},
-          },
-          accessToken,
-        })) as any;
-        if (error) {
-          throw new Error(error);
-        }
-        await createTask(data?.id);
-      } else await createTask();
-      reset();
-      setChecked(false);
-    } catch (err: any) {
-      addToast(err.message, 'error');
-    }
-  };
-
-  const createTask = async (eventId = '') => {
-    const {title, description, date, isCompleted} = getValues();
-    await addTask({
-      title: title,
-      description: description,
-      date: date,
-      isCompleted: isCompleted,
-      eventId: eventId,
+    if (googleCalendarState.isEventAdded) {
+      const {isMeetupAdded} = googleCalendarState;
+      const data = await createEvent(
+        getValues,
+        addTaskToGoogleCalendar,
+        isMeetupAdded,
+      );
+      await createTask(getValues, addTask, data?.id);
+    } else await createTask(getValues, addTask);
+    setGoogleCalendarState({
+      isEventAdded: false,
+      isMeetupAdded: false,
     });
+    reset();
     navigation.goBack();
   };
 
@@ -133,7 +85,6 @@ const NewTask = ({navigation}) => {
     fontWeight: '400',
   } as StyleProp<TextStyle>;
 
-  const theme = useTheme();
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -148,7 +99,13 @@ const NewTask = ({navigation}) => {
         />
       ),
     });
-  }, [isValid, taskLoader, googleLoader, checked, isMeetUpAdded]);
+  }, [isValid, taskLoader, googleLoader, googleCalendarState]);
+  const onMeetupAdded = (isMeetupAdded: boolean) => {
+    setGoogleCalendarState({
+      ...googleCalendarState,
+      isMeetupAdded: isMeetupAdded,
+    });
+  };
 
   return (
     <ScreenWrapper
@@ -180,11 +137,23 @@ const NewTask = ({navigation}) => {
           getValues={getValues}
         />
         <Error>{errors.date && errors.date.message}</Error>
-        <StyledCheckBox checked={checked} onChange={() => setChecked(!checked)}>
+        <StyledCheckBox
+          checked={googleCalendarState.isEventAdded}
+          onChange={() =>
+            setGoogleCalendarState({
+              ...googleCalendarState,
+              isEventAdded: !googleCalendarState.isEventAdded,
+            })
+          }>
           <CheckBoxLabel>Add to google calendar</CheckBoxLabel>
         </StyledCheckBox>
-        {checked && (
-          <MeetupButton meet={isMeetUpAdded} setMeet={setIsMeetUpAdded} />
+        {googleCalendarState.isEventAdded && (
+          <MeetupButton
+            isMeetupAdded={googleCalendarState.isMeetupAdded}
+            setIsMeetUpAdded={() =>
+              onMeetupAdded(!googleCalendarState.isMeetupAdded)
+            }
+          />
         )}
       </Container>
     </ScreenWrapper>
