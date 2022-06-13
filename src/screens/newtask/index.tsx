@@ -16,6 +16,7 @@ import {TaskForm} from 'types/index';
 import {ImageProps, StyleProp, TextStyle} from 'react-native';
 import {useTheme} from '@ui-kitten/components';
 import {createEvent, createTask} from 'services/index';
+import {pathOr} from 'ramda';
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -27,8 +28,6 @@ const taskSchema = yup.object().shape({
 const NewTask = ({navigation}) => {
   const theme = useTheme();
   const [addTask, {isLoading: taskLoader}] = Todo.useAddTaskMutation();
-  let id = '',
-    hangoutLink = '';
   const [googleCalendarState, setGoogleCalendarState] = React.useState({
     isEventAdded: false,
     isMeetupAdded: false,
@@ -54,16 +53,26 @@ const NewTask = ({navigation}) => {
 
   const onSubmit = async () => {
     const {isEventAdded, isMeetupAdded} = googleCalendarState;
+    const {date, description, title, isCompleted} = getValues();
+    let data: any;
     if (isEventAdded) {
-      const data = await createEvent(
-        getValues,
+      data = await createEvent(
+        title,
+        description,
+        date,
         addTaskToGoogleCalendar,
         isMeetupAdded,
       );
-      id = isEventAdded ? data?.id : '';
-      hangoutLink = isMeetupAdded ? data?.hangoutLink : '';
     }
-    await createTask(getValues, addTask, id, hangoutLink);
+    await createTask(
+      title,
+      description,
+      date,
+      isCompleted,
+      addTask,
+      pathOr('', ['id'], data),
+      pathOr('', ['hangoutLink'], data),
+    );
     setGoogleCalendarState({
       isEventAdded: false,
       isMeetupAdded: false,
@@ -99,6 +108,7 @@ const NewTask = ({navigation}) => {
       ),
     });
   }, [isValid, taskLoader, googleLoader, googleCalendarState]);
+
   const onMeetupAdded = (isMeetupAdded: boolean) => {
     setGoogleCalendarState({
       ...googleCalendarState,
@@ -117,7 +127,7 @@ const NewTask = ({navigation}) => {
           textStyle={titleTextStyle}
           placeholder="Add title"
         />
-        <Error>{errors.title && errors.title.message}</Error>
+        <Error>{pathOr(null, ['title', 'message'], errors)}</Error>
         <RenderInputController
           name="description"
           inputControl={control}
@@ -128,16 +138,16 @@ const NewTask = ({navigation}) => {
             <StyledIcon {...props} name="menu-2-outline" />
           )}
         />
-        <Error>{errors.description && errors.description.message}</Error>
+        <Error>{pathOr(null, ['description', 'message'], errors)}</Error>
         <RenderDateController
           name="date"
           inputControl={control}
           setValue={setValue}
           getValues={getValues}
         />
-        <Error>{errors.date && errors.date.message}</Error>
-        <CheckBox
-          value={googleCalendarState.isEventAdded}
+        <Error>{pathOr(null, ['date', 'message'], errors)}</Error>
+        <StyledCheckBox
+          checked={googleCalendarState.isEventAdded}
           onChange={() =>
             setGoogleCalendarState({
               ...googleCalendarState,

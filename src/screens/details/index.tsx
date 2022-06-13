@@ -16,8 +16,8 @@ import moment from 'moment';
 import {DeleteModal, Loader} from 'components/index';
 import {useTheme} from '@ui-kitten/components';
 import {Todo} from 'store/api/index';
-import {addToast} from 'utils/index';
-import {Linking} from 'react-native';
+import {addToast, navigateToURL} from 'utils/index';
+import {pathOr} from 'ramda';
 
 type DetailsScreenProps = {
   route: RouteProp<{params: {task: Task}}, 'params'>;
@@ -74,16 +74,10 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
     }
   };
 
-  const onJoinMeeting = async () => {
-    try {
-      Linking.openURL(task.hangoutLink);
-    } catch (error: any) {
-      addToast(error.message, 'error');
-    }
-  };
   const iconFillColor = task.isCompleted
     ? theme['color-primary-500']
     : theme['color-danger-500'];
+
   return (
     <ScreenWrapper
       statusBarColor={theme['background-basic-color-1']}
@@ -93,16 +87,19 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       {isLoading && <Loader />}
       <Container>
         <Wrapper>
-          <Title category="label">{task.title}</Title>
-          <IconWrapper onPress={() => onStatusUpdate(!task.isCompleted)}>
+          <Title category="label">{pathOr('', ['title'], task)}</Title>
+          <IconWrapper
+            onPress={() => onStatusUpdate(!pathOr('', ['isCompleted'], task))}>
             <StyledIcon name="checkmark-circle-outline" fill={iconFillColor} />
           </IconWrapper>
         </Wrapper>
-        <Deadline>{`Due: ${moment(task.date).format('YYYY-MM-DD')}`}</Deadline>
-        <Description>{task.description}</Description>
-        {task.hangoutLink.length > 0 && (
+        <Deadline>{`Due: ${moment(pathOr('', ['date'], task)).format(
+          'YYYY-MM-DD',
+        )}`}</Deadline>
+        <Description>{pathOr('', ['description'], task)}</Description>
+        {pathOr('', ['hangoutLink', 'length'], task) > 0 && (
           <JoinMeetingButton
-            onPress={onJoinMeeting}
+            onPress={() => navigateToURL(pathOr('', ['hangoutLink'], task))}
             appearance="filled"
             status="success">
             Join Meeting
@@ -113,7 +110,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
         visible={visible}
         onClose={() => setVisible(!visible)}
         backdropStyle={backdropStyle}
-        onBackdropPress={() => setVisible(visible)}
+        onBackdropPress={() => setVisible(!visible)}
         task={task}
       />
     </ScreenWrapper>

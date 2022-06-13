@@ -1,7 +1,5 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {GOOGLE_CLIENT_ID} from '@env';
-import {UseFormGetValues} from 'react-hook-form';
-import {TaskForm} from 'types/index';
 import {addToast} from 'utils/index';
 
 GoogleSignin.configure({
@@ -12,7 +10,7 @@ GoogleSignin.configure({
   ],
 });
 
-export const signInToGoogle = async () => {
+const signInToGoogle = async () => {
   await GoogleSignin.hasPlayServices();
   await GoogleSignin.signIn();
   if (await GoogleSignin.isSignedIn()) {
@@ -22,12 +20,13 @@ export const signInToGoogle = async () => {
 };
 
 export const createEvent = async (
-  getValues: UseFormGetValues<TaskForm>,
+  title: string,
+  description: string,
+  date: Date,
   addEvent: any,
   isMeetupAdded: boolean,
 ) => {
   try {
-    const {title, description, date} = getValues();
     const accessToken = await signInToGoogle();
     const {data, error} = await addEvent({
       task: {
@@ -57,25 +56,28 @@ export const createEvent = async (
     }
     return data as any;
   } catch (err: any) {
+    console.log(err);
     addToast(err.message, 'error');
   }
 };
 
 export const createTask = async (
-  getValues: UseFormGetValues<TaskForm>,
+  title: string,
+  description: string,
+  date: Date,
+  isCompleted: boolean,
   addTask: any,
-  eventId = '' as string,
-  hangoutLink = '' as string,
+  eventId = '',
+  hangoutLink = '',
 ) => {
   try {
-    const {title, description, date, isCompleted} = getValues();
     await addTask({
-      title: title,
-      description: description,
-      date: date,
-      isCompleted: isCompleted,
-      eventId: eventId,
-      hangoutLink: hangoutLink,
+      title,
+      description,
+      date,
+      isCompleted,
+      eventId,
+      hangoutLink,
     });
   } catch (err: any) {
     addToast(err.message, 'error');
