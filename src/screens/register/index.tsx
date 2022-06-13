@@ -20,6 +20,7 @@ import {useTheme} from '@ui-kitten/components';
 import {StyleProp, TextStyle, ViewStyle} from 'react-native';
 import {AuthenticationIllustration} from 'assets/index';
 import {addToast} from 'utils/index';
+import {pathOr} from 'ramda';
 
 const registerSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -73,12 +74,20 @@ const Register = () => {
   } as StyleProp<TextStyle>;
 
   const illustrationStyle = {
-    marginVertical: 50,
+    marginVertical: 100,
   } as StyleProp<ViewStyle>;
+  const ScrollViewProps = {
+    contentContainerStyle: {
+      flexGrow: 1,
+      backgroundColor: theme['background-basic-color-1'],
+    },
+  };
 
   return (
     <ScreenWrapper
+      scrollType="keyboard"
       barStyle="dark-content"
+      scrollViewProps={ScrollViewProps}
       statusBarColor={theme['background-basic-color-1']}>
       <Container>
         <AuthenticationIllustration
@@ -94,14 +103,14 @@ const Register = () => {
             placeholder="Your name"
             textStyle={textStyle}
           />
-          <Error>{errors.name && errors.name.message}</Error>
+          <Error>{pathOr('', ['name', 'message'], errors)}</Error>
           <RenderInputController
             name="Email"
             inputControl={control}
             placeholder="Your email"
             textStyle={textStyle}
           />
-          <Error>{errors.email && errors.email.message}</Error>
+          <Error>{pathOr('', ['email', 'message'], errors)}</Error>
         </InputContainer>
         <ButtonContainer>
           <LoadingButton

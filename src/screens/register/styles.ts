@@ -5,7 +5,7 @@ export const Container = styled(Layout)({
   flex: 1,
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
 });
 export const Label = styled(Text)({
   fontSize: 30,
@@ -22,7 +22,9 @@ export const InputContainer = styled(Layout)({
 export const Error = styled(Text)({
   fontSize: 12,
   fontWeight: 400,
+  color: 'red',
+  marginRight: 20,
 });
 export const ButtonContainer = styled(Layout)({
-  marginTop: 20,
+  marginVertical: 20,
 });

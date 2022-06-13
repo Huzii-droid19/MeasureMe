@@ -5,6 +5,7 @@ import {Todo} from 'store/api/index';
 import {Task} from 'types/index';
 import {LoadingButton} from 'components/index';
 import {NavigationService} from 'navigation/index';
+import {addToast} from 'utils/index';
 
 type ModalProps = {
   visible: boolean;
@@ -24,10 +25,14 @@ const DeleteModal = ({
   const {useDeleteTaskMutation} = Todo;
   const [deleteTask, {isLoading}] = useDeleteTaskMutation();
   const onDelete = async () => {
-    await deleteTask(task).then(() => {
+    try {
+      await deleteTask(task);
+    } catch (error: any) {
+      addToast(error.message, 'error');
+    } finally {
       onClose();
       NavigationService.navigate('Home');
-    });
+    }
   };
 
   return (

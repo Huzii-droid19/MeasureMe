@@ -16,6 +16,7 @@ import {useTheme} from '@ui-kitten/components';
 import moment from 'moment';
 import {DateData} from 'react-native-calendars';
 import {NavigationService} from 'navigation/index';
+import {pathOr} from 'ramda';
 
 const Home = () => {
   const {useGetTasksQuery} = Todo;
@@ -30,7 +31,7 @@ const Home = () => {
   tasks?.forEach((task: Task) => {
     markDates[moment(task.date).format('YYYY-MM-DD')] = {
       marked: true,
-      dotColor: task.isCompleted
+      dotColor: pathOr(false, ['isCompleted'], task)
         ? theme['color-primary-700']
         : theme['color-danger-700'],
     };
@@ -60,7 +61,10 @@ const Home = () => {
     //call when text type in searchbar
     setFilteredData(
       tasks?.filter(
-        item => item.title.toLowerCase().indexOf(text.toLowerCase()) > -1,
+        (item: Task) =>
+          pathOr('', ['title'], item)
+            .toLowerCase()
+            .indexOf(text.toLowerCase()) > -1,
       ),
     );
     setSearch(text);
@@ -116,7 +120,7 @@ const Home = () => {
         <TaskList
           data={filteredData}
           renderItem={renderItemCall}
-          keyExtractor={(item: Task) => item.id.toString()}
+          keyExtractor={(item: Task) => pathOr('', ['id'], item).toString()}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
           }

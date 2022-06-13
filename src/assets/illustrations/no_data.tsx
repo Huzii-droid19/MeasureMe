@@ -5,7 +5,7 @@ import Svg, {Path, Circle} from 'react-native-svg';
 type Props = {
   width?: number;
   height?: number;
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
 };
 
 const NoData = ({height, width, style}: Props) => {
