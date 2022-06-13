@@ -15,7 +15,7 @@ import {TaskForm, Task} from 'types/index';
 import {RouteProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
 import {Todo} from 'store/api/index';
-import {ImageProps, StyleProp, TextStyle} from 'react-native';
+import {ImageProps, StyleSheet} from 'react-native';
 import {pathOr} from 'ramda';
 
 type EditScreenProps = {
@@ -99,17 +99,19 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
     });
   };
 
-  const titleTextStyle = {
-    fontSize: 25,
-    fontWeight: '600',
-    minHeight: 64,
-    paddingLeft: 40,
-  } as StyleProp<TextStyle>;
-  const descriptionTextStyle = {
-    fontSize: 16,
-    minHeight: 64,
-    fontWeight: '400',
-  } as StyleProp<TextStyle>;
+  const textStyle = StyleSheet.create({
+    titleTextStyle: {
+      fontSize: 25,
+      fontWeight: '600',
+      minHeight: 64,
+      paddingLeft: 40,
+    },
+    descriptionTextStyle: {
+      fontSize: 16,
+      minHeight: 64,
+      fontWeight: '400',
+    },
+  });
 
   return (
     <ScreenWrapper
@@ -120,7 +122,7 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
           <RenderInputController
             name="title"
             inputControl={control}
-            textStyle={titleTextStyle}
+            textStyle={textStyle.titleTextStyle}
             placeholder="Title"
           />
           <Error>{pathOr('', ['title', 'message'], errors)}</Error>
@@ -128,7 +130,7 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
             name="description"
             inputControl={control}
             multiline={true}
-            textStyle={descriptionTextStyle}
+            textStyle={textStyle.descriptionTextStyle}
             placeholder="Description"
             accessoryLeft={(props: ImageProps) => (
               <StyledIcon {...props} name="menu-2-outline" />

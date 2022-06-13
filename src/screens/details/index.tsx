@@ -18,6 +18,7 @@ import {useTheme} from '@ui-kitten/components';
 import {Todo} from 'store/api/index';
 import {addToast, navigateToURL} from 'utils/index';
 import {pathOr} from 'ramda';
+import {StyleSheet} from 'react-native';
 
 type DetailsScreenProps = {
   route: RouteProp<{params: {task: Task}}, 'params'>;
@@ -29,12 +30,12 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
   const {task}: {task: Task} = route.params;
   const [visible, setVisible] = React.useState(false);
   const theme = useTheme();
-  const ScrollViewProps = {
+  const ScrollViewProps = StyleSheet.create({
     contentContainerStyle: {
       flexGrow: 1,
       backgroundColor: theme['background-basic-color-1'],
     },
-  };
+  });
 
   const renderIcon = () => (
     <>
