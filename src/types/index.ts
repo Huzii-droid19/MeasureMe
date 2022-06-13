@@ -12,8 +12,10 @@ export interface Task {
   isCompleted: boolean;
   userId: number;
   eventId: string;
+  hangoutLink: string;
 }
-export interface TaskForm extends Omit<Task, 'id' | 'userId'> {}
+export interface TaskForm
+  extends Omit<Task, 'id' | 'userId' | 'eventId' | 'hangoutLink'> {}
 export interface RegisterForm extends Omit<User, 'id'> {}
 
 export interface RootStackParamsList {

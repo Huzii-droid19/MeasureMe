@@ -32,6 +32,8 @@ const taskSchema = yup.object().shape({
 const NewTask = ({navigation}) => {
   const theme = useTheme();
   const [addTask, {isLoading: taskLoader}] = Todo.useAddTaskMutation();
+  let id = '',
+    hangoutLink = '';
   const [googleCalendarState, setGoogleCalendarState] = React.useState({
     isEventAdded: false,
     isMeetupAdded: false,
@@ -56,15 +58,17 @@ const NewTask = ({navigation}) => {
   }); // form intialization
 
   const onSubmit = async () => {
-    if (googleCalendarState.isEventAdded) {
-      const {isMeetupAdded} = googleCalendarState;
+    const {isEventAdded, isMeetupAdded} = googleCalendarState;
+    if (isEventAdded) {
       const data = await createEvent(
         getValues,
         addTaskToGoogleCalendar,
         isMeetupAdded,
       );
-      await createTask(getValues, addTask, data?.id);
-    } else await createTask(getValues, addTask);
+      id = isEventAdded ? data?.id : '';
+      hangoutLink = isMeetupAdded ? data?.hangoutLink : '';
+    }
+    await createTask(getValues, addTask, id, hangoutLink);
     setGoogleCalendarState({
       isEventAdded: false,
       isMeetupAdded: false,
