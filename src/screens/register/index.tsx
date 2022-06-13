@@ -1,6 +1,12 @@
 import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {Container, Label, InputContainer, Error, Info} from './styles';
+import {
+  Container,
+  Label,
+  InputContainer,
+  Error,
+  ButtonContainer,
+} from './styles';
 import {Todo} from 'store/api/index';
 import {getUniqueId} from 'react-native-device-info';
 import {useForm} from 'react-hook-form';
@@ -10,6 +16,10 @@ import {LoadingButton, RenderInputController} from 'components/index';
 import {RegisterForm, User} from 'types/index';
 import {setAuthUser} from 'store/slice/authSlice';
 import {useDispatch} from 'react-redux';
+import {useTheme} from '@ui-kitten/components';
+import {StyleProp, TextStyle, ViewStyle} from 'react-native';
+import {AuthenticationIllustration} from 'assets/index';
+import {addToast} from 'utils/index';
 
 const registerSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -35,47 +45,76 @@ const Register = () => {
     resolver: yupResolver(registerSchema),
     mode: 'onChange',
   }); // form intialization
-  const [addUser, {isError, error, isLoading}] = useAddUserMutation(); // add user mutation
+  const [addUser, {isLoading}] = useAddUserMutation(); // add user mutation
 
   const onSubmit = async ({name, email}: RegisterForm) => {
-    const deviceId = getUniqueId();
-    await addUser({
-      name: name,
-      email: email,
-      DeviceId: deviceId,
-    }).then(res => {
-      dispatch(setAuthUser({isLoggedIn: true, userMeta: res?.data as User}));
-    });
-    reset();
+    try {
+      const deviceId = getUniqueId();
+      const {data, error} = await addUser({
+        name: name,
+        email: email,
+        DeviceId: deviceId,
+      });
+      if (error) {
+        throw new Error(error);
+      }
+      dispatch(setAuthUser({isLoggedIn: true, userMeta: data as User}));
+    } catch (error: any) {
+      addToast(error.message, 'error');
+    } finally {
+      reset();
+    }
   }; // function to call when user submit the form
+  const theme = useTheme();
+  const textStyle = {
+    fontSize: 16,
+    minHeight: 40,
+    fontWeight: '400',
+  } as StyleProp<TextStyle>;
+
+  const illustrationStyle = {
+    marginVertical: 50,
+  } as StyleProp<ViewStyle>;
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper
+      barStyle="dark-content"
+      statusBarColor={theme['background-basic-color-1']}>
       <Container>
+        <AuthenticationIllustration
+          height={150}
+          width={150}
+          style={illustrationStyle}
+        />
         <Label category="label">Register</Label>
         <InputContainer>
           <RenderInputController
             name="Name"
             inputControl={control}
             placeholder="Your name"
+            textStyle={textStyle}
           />
-          {errors.name && <Error>{errors.name.message}</Error>}
+          <Error>{errors.name && errors.name.message}</Error>
           <RenderInputController
             name="Email"
             inputControl={control}
             placeholder="Your email"
+            textStyle={textStyle}
           />
-          {errors.email && <Error>{errors.email.message}</Error>}
+          <Error>{errors.email && errors.email.message}</Error>
         </InputContainer>
-        <LoadingButton
-          label="Register"
-          onPress={handleSubmit(onSubmit)}
-          isLoading={isLoading}
-          disabled={!isValid}
-          status="primary"
-          appearance="filled"
-        />
-        <Info>{isError && <Error>{error}</Error>}</Info>
+        <ButtonContainer>
+          <LoadingButton
+            size="medium"
+            label="Register"
+            width={200}
+            onPress={handleSubmit(onSubmit)}
+            isLoading={isLoading}
+            disabled={!isValid}
+            status="primary"
+            appearance="filled"
+          />
+        </ButtonContainer>
       </Container>
     </ScreenWrapper>
   );
