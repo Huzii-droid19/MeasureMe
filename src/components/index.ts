@@ -7,3 +7,4 @@ export {default as LoadingButton} from './LoadingButton';
 export {default as DeleteModal} from './DeleteModal';
 export {default as Header} from './Header';
 export {default as MeetupButton} from './MeetupButton';
+export {default as CheckBox} from './CheckBox';

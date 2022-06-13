@@ -1,11 +1,5 @@
 import React, {useLayoutEffect} from 'react';
-import {
-  Container,
-  Error,
-  StyledCheckBox,
-  CheckBoxLabel,
-  StyledIcon,
-} from './styles';
+import {Container, Error, StyledIcon} from './styles';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
@@ -15,6 +9,7 @@ import {
   RenderDateController,
   LoadingButton,
   MeetupButton,
+  CheckBox,
 } from 'components/index';
 import {Todo, Calendar} from 'store/api/index';
 import {TaskForm} from 'types/index';
@@ -141,16 +136,16 @@ const NewTask = ({navigation}) => {
           getValues={getValues}
         />
         <Error>{errors.date && errors.date.message}</Error>
-        <StyledCheckBox
-          checked={googleCalendarState.isEventAdded}
+        <CheckBox
+          value={googleCalendarState.isEventAdded}
           onChange={() =>
             setGoogleCalendarState({
               ...googleCalendarState,
               isEventAdded: !googleCalendarState.isEventAdded,
             })
-          }>
-          <CheckBoxLabel>Add to google calendar</CheckBoxLabel>
-        </StyledCheckBox>
+          }
+          label="Add task to google calendar"
+        />
         {googleCalendarState.isEventAdded && (
           <MeetupButton
             isMeetupAdded={googleCalendarState.isMeetupAdded}
