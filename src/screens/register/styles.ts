@@ -1,8 +1,5 @@
 import styled from 'styled-components/native';
-import {Button, Text, Layout} from '@ui-kitten/components';
-import {Dimensions} from 'react-native';
-
-const {width} = Dimensions.get('window');
+import {Text, Layout} from '@ui-kitten/components';
 
 export const Container = styled(Layout)({
   flex: 1,
@@ -20,16 +17,12 @@ export const InputContainer = styled(Layout)({
   flexDirection: 'column',
   alignItems: 'flex-end',
   justifyContent: 'center',
-  width: width * 0.9,
+  width: '100%',
 });
 export const Error = styled(Text)({
   fontSize: 12,
   fontWeight: 400,
 });
-export const SubmitButton = styled(Button)({
-  width: width * 0.5,
-  marginTop: 20,
-});
-export const Info = styled(Layout)({
+export const ButtonContainer = styled(Layout)({
   marginTop: 20,
 });
