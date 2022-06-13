@@ -146,8 +146,8 @@ const NewTask = ({navigation}) => {
           getValues={getValues}
         />
         <Error>{pathOr(null, ['date', 'message'], errors)}</Error>
-        <StyledCheckBox
-          checked={googleCalendarState.isEventAdded}
+        <CheckBox
+          value={googleCalendarState.isEventAdded}
           onChange={() =>
             setGoogleCalendarState({
               ...googleCalendarState,
