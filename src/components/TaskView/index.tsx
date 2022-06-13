@@ -12,6 +12,7 @@ import {Task} from 'types/index';
 import moment from 'moment';
 import {DeleteModal} from 'components/index';
 import {NavigationService} from 'navigation/index';
+import {pathOr} from 'ramda';
 type ItemViewProps = {
   item: Task;
   onPress: () => void;
@@ -27,12 +28,14 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   };
   return (
-    <Container isCompleted={item.isCompleted}>
+    <Container isCompleted={pathOr(false, ['isCompleted'], item)}>
       <TextContainer onPress={onPress}>
-        <Title isCompleted={item.isCompleted}>{item.title}</Title>
+        <Title isCompleted={pathOr(false, ['isCompleted'], item)}>
+          {pathOr('', ['title'], item)}
+        </Title>
         <Description>
-          {item.description.slice(0, 30) +
-            (item.description.length > 30 ? '...' : '')}
+          {pathOr('', ['description'], item).slice(0, 30) +
+            (pathOr('', ['description'], item).length > 30 ? '...' : '')}
         </Description>
         <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>

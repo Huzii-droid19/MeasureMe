@@ -8,7 +8,7 @@ export const Container = styled(Layout)({
   flex: 1,
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   width: width,
   height: height,
 });

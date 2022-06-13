@@ -15,7 +15,8 @@ import {TaskForm, Task} from 'types/index';
 import {RouteProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
 import {Todo} from 'store/api/index';
-import {ImageProps, StyleProp, TextStyle} from 'react-native';
+import {ImageProps, StyleSheet} from 'react-native';
+import {pathOr} from 'ramda';
 
 type EditScreenProps = {
   route: RouteProp<{params: {task: Task}}, 'params'>;
@@ -27,8 +28,8 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
   const {task}: {task: Task} = route.params;
   const theme = useTheme();
   const [googleCalendarState, setGoogleCalendarState] = React.useState({
-    isEventAdded: task.eventId.length > 0,
-    isMeetupAdded: task?.hangoutLink.length > 0,
+    isEventAdded: pathOr(false, ['eventId', 'length'], task) > 0,
+    isMeetupAdded: pathOr(false, ['hangoutLink', 'length'], task) > 0,
   });
   const taskSchema = yup.object().shape({
     title: yup
@@ -59,10 +60,10 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
     reset,
   } = useForm<TaskForm>({
     defaultValues: {
-      title: task?.title,
-      description: task.description,
-      date: new Date(task.date),
-      isCompleted: task.isCompleted,
+      title: pathOr('', ['title'], task),
+      description: pathOr('', ['description'], task),
+      date: new Date(pathOr('', ['date'], task)),
+      isCompleted: pathOr(false, ['isCompleted'], task),
     },
     resolver: yupResolver(taskSchema),
     mode: 'all',
@@ -98,17 +99,19 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
     });
   };
 
-  const titleTextStyle = {
-    fontSize: 25,
-    fontWeight: '600',
-    minHeight: 64,
-    paddingLeft: 40,
-  } as StyleProp<TextStyle>;
-  const descriptionTextStyle = {
-    fontSize: 16,
-    minHeight: 64,
-    fontWeight: '400',
-  } as StyleProp<TextStyle>;
+  const textStyle = StyleSheet.create({
+    titleTextStyle: {
+      fontSize: 25,
+      fontWeight: '600',
+      minHeight: 64,
+      paddingLeft: 40,
+    },
+    descriptionTextStyle: {
+      fontSize: 16,
+      minHeight: 64,
+      fontWeight: '400',
+    },
+  });
 
   return (
     <ScreenWrapper
@@ -119,28 +122,28 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
           <RenderInputController
             name="title"
             inputControl={control}
-            textStyle={titleTextStyle}
+            textStyle={textStyle.titleTextStyle}
             placeholder="Title"
           />
-          <Error>{errors.title && errors.title.message}</Error>
+          <Error>{pathOr('', ['title', 'message'], errors)}</Error>
           <RenderInputController
             name="description"
             inputControl={control}
             multiline={true}
-            textStyle={descriptionTextStyle}
+            textStyle={textStyle.descriptionTextStyle}
             placeholder="Description"
             accessoryLeft={(props: ImageProps) => (
               <StyledIcon {...props} name="menu-2-outline" />
             )}
           />
-          <Error>{errors.description && errors.description.message}</Error>
+          <Error>{pathOr('', ['description', 'message'], errors)}</Error>
           <RenderDateController
             name="date"
             inputControl={control}
             setValue={setValue}
             getValues={getValues}
           />
-          <Error>{errors.date && errors.date.message}</Error>
+          <Error>{pathOr('', ['date', 'message'], errors)}</Error>
           <CheckBox
             value={googleCalendarState.isEventAdded}
             onChange={() =>

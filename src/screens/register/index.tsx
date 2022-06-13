@@ -17,9 +17,10 @@ import {RegisterForm, User} from 'types/index';
 import {setAuthUser} from 'store/slice/authSlice';
 import {useDispatch} from 'react-redux';
 import {useTheme} from '@ui-kitten/components';
-import {StyleProp, TextStyle, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {AuthenticationIllustration} from 'assets/index';
 import {addToast} from 'utils/index';
+import {pathOr} from 'ramda';
 
 const registerSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -66,25 +67,39 @@ const Register = () => {
     }
   }; // function to call when user submit the form
   const theme = useTheme();
-  const textStyle = {
-    fontSize: 16,
-    minHeight: 40,
-    fontWeight: '400',
-  } as StyleProp<TextStyle>;
+  const styles = StyleSheet.create({
+    textStyle: {
+      fontSize: 16,
+      minHeight: 40,
+      fontWeight: '400',
+    },
+    illustrationStyle: {
+      marginVertical: 100,
+    },
+    ScrollViewStyle: {
+      flexGrow: 1,
+      backgroundColor: theme['background-basic-color-1'],
+    },
+  });
 
-  const illustrationStyle = {
-    marginVertical: 50,
-  } as StyleProp<ViewStyle>;
+  const ScrollViewProps = StyleSheet.create({
+    contentContainerStyle: {
+      flexGrow: 1,
+      backgroundColor: theme['background-basic-color-1'],
+    },
+  });
 
   return (
     <ScreenWrapper
+      scrollType="keyboard"
       barStyle="dark-content"
+      scrollViewProps={ScrollViewProps}
       statusBarColor={theme['background-basic-color-1']}>
       <Container>
         <AuthenticationIllustration
           height={150}
           width={150}
-          style={illustrationStyle}
+          style={styles.illustrationStyle}
         />
         <Label category="label">Register</Label>
         <InputContainer>
@@ -92,16 +107,16 @@ const Register = () => {
             name="Name"
             inputControl={control}
             placeholder="Your name"
-            textStyle={textStyle}
+            textStyle={styles.textStyle}
           />
-          <Error>{errors.name && errors.name.message}</Error>
+          <Error>{pathOr('', ['name', 'message'], errors)}</Error>
           <RenderInputController
             name="Email"
             inputControl={control}
             placeholder="Your email"
-            textStyle={textStyle}
+            textStyle={styles.textStyle}
           />
-          <Error>{errors.email && errors.email.message}</Error>
+          <Error>{pathOr('', ['email', 'message'], errors)}</Error>
         </InputContainer>
         <ButtonContainer>
           <LoadingButton

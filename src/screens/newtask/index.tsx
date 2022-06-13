@@ -13,7 +13,7 @@ import {
 } from 'components/index';
 import {Todo, Calendar} from 'store/api/index';
 import {TaskForm} from 'types/index';
-import {ImageProps, StyleProp, TextStyle} from 'react-native';
+import {ImageProps, StyleProp, StyleSheet, TextStyle} from 'react-native';
 import {useTheme} from '@ui-kitten/components';
 import {createEvent, createTask} from 'services/index';
 import {pathOr} from 'ramda';
@@ -81,17 +81,19 @@ const NewTask = ({navigation}) => {
     navigation.goBack();
   };
 
-  const titleTextStyle = {
-    fontSize: 25,
-    fontWeight: '600',
-    minHeight: 64,
-    paddingLeft: 40,
-  } as StyleProp<TextStyle>;
-  const descriptionTextStyle = {
-    fontSize: 16,
-    minHeight: 64,
-    fontWeight: '400',
-  } as StyleProp<TextStyle>;
+  const textStyle = StyleSheet.create({
+    titleTextStyle: {
+      fontSize: 25,
+      fontWeight: '600',
+      minHeight: 64,
+      paddingLeft: 40,
+    },
+    descriptionTextStyle: {
+      fontSize: 16,
+      minHeight: 64,
+      fontWeight: '400',
+    },
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -124,7 +126,7 @@ const NewTask = ({navigation}) => {
         <RenderInputController
           name="title"
           inputControl={control}
-          textStyle={titleTextStyle}
+          textStyle={textStyle.titleTextStyle}
           placeholder="Add title"
         />
         <Error>{pathOr(null, ['title', 'message'], errors)}</Error>
@@ -132,7 +134,7 @@ const NewTask = ({navigation}) => {
           name="description"
           inputControl={control}
           multiline={true}
-          textStyle={descriptionTextStyle}
+          textStyle={textStyle.descriptionTextStyle}
           placeholder="Add description"
           accessoryLeft={(props: ImageProps) => (
             <StyledIcon {...props} name="menu-2-outline" />
