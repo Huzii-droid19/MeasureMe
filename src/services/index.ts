@@ -57,7 +57,6 @@ export const createEvent = async (
     }
     return data as any;
   } catch (err: any) {
-    console.log(err);
     addToast(err.message, 'error');
   }
 };

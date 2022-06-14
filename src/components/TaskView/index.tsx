@@ -1,6 +1,7 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {pathOr} from 'ramda';
+import {ThemeType} from '@ui-kitten/components';
 
 import {
   Container,
@@ -18,25 +19,25 @@ import {NavigationService} from 'navigation';
 type ItemViewProps = {
   item: Task;
   onPress: () => void;
-  theme: any;
+  theme: ThemeType;
 };
 
 const ItemView = ({item, onPress, theme}: ItemViewProps) => {
   const [visible, setVisible] = React.useState(false);
+  const title: String = pathOr('', ['title'], item);
+  const description: string = pathOr('', ['description'], item);
+  const isCompleted: boolean = pathOr(false, ['isCompleted'], item);
   const onClose = () => {
     setVisible(!visible);
   };
   return (
-    <Container isCompleted={pathOr(false, ['isCompleted'], item)}>
+    <Container isCompleted={isCompleted}>
       <TextContainer onPress={onPress}>
-        <Title isCompleted={pathOr(false, ['isCompleted'], item)}>
-          {pathOr('', ['title'], item)}
-        </Title>
+        <Title isCompleted={isCompleted}>{title}</Title>
         <Description>
-          {pathOr('', ['description'], item).slice(0, 30) +
-            (pathOr('', ['description'], item).length > 30 ? '...' : '')}
+          {description.slice(0, 30) + (description.length > 30 ? '...' : '')}
         </Description>
-        <Date>{moment(item.date).format('DD-MM-YYYY')}</Date>
+        <Date>{dayjs(item.date).format('DD-MM-YYYY')}</Date>
       </TextContainer>
       <IconWrapper
         onPress={() => NavigationService.navigate('Edit', {task: item})}>

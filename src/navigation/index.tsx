@@ -13,7 +13,7 @@ import {
   DetailsScreen,
   NewTaskScreen,
   EditTaskScreen,
-} from '../screens';
+} from 'screens';
 import {selectIsLoggedIn} from 'store/slice/authSlice';
 import {RootStackParamsList} from 'types';
 
