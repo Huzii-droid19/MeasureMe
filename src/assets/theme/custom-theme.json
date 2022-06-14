@@ -45,5 +45,6 @@
   "color-danger-800": "#71040B",
   "color-danger-900": "#5E020F",
   "color-header": "#F4F6FF",
-  "backdrop-color": "#00000080"
+  "backdrop-color": "#00000080",
+  "white": "#FFFFFF"
 }

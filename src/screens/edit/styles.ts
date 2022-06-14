@@ -15,6 +15,7 @@ export const Error = styled(Text)({
   fontSize: 12,
   fontWeight: 600,
   color: 'red',
+  marginLeft: 20,
 });
 export const StyledIcon = styled(Icon)({
   height: 20,

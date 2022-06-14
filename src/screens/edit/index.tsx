@@ -33,26 +33,42 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
     isEventAdded: pathOr(false, ['eventId', 'length'], task) > 0,
     isMeetupAdded: pathOr(false, ['hangoutLink', 'length'], task) > 0,
   });
-  const taskSchema = yup.object().shape({
-    title: yup
-      .string()
-      .required()
-      .test('is-title', 'Title is not updated', value => {
-        return value !== task.title;
-      }),
-    description: yup
-      .string()
-      .required()
-      .test('is-description', 'Description is not updated', value => {
-        return value !== task.description;
-      }),
-    date: yup
-      .date()
-      .required()
-      .test('is-date', 'Date is not updated', value => {
-        return value?.toDateString() !== new Date(task.date).toDateString();
-      }),
-  });
+
+  const taskSchema = yup.object().shape(
+    {
+      title: yup
+        .string()
+        .required()
+        .trim()
+        .when('title', {
+          is: (title: string) => title === task.title,
+          then: yup.string().required().trim(),
+          otherwise: yup.string().notRequired().trim(),
+        }),
+      description: yup
+        .string()
+        .required()
+        .trim()
+        .when('description', {
+          is: (descrption: string) => descrption === task.description,
+          then: yup.string().required().trim(),
+          otherwise: yup.string().notRequired().trim(),
+        }),
+      date: yup
+        .date()
+        .required()
+        .when('date', {
+          is: (date: Date) => date === task.date,
+          then: yup.date().required(),
+          otherwise: yup.date().notRequired(),
+        }),
+    },
+    [
+      ['title', 'title'],
+      ['description', 'description'],
+      ['date', 'date'],
+    ],
+  );
 
   const {
     control,
