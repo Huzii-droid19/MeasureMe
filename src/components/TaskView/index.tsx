@@ -1,4 +1,7 @@
 import React from 'react';
+import moment from 'moment';
+import {pathOr} from 'ramda';
+
 import {
   Container,
   Description,
@@ -8,11 +11,10 @@ import {
   StyledIcon,
   IconWrapper,
 } from './styles';
-import {Task} from 'types/index';
-import moment from 'moment';
-import {DeleteModal} from 'components/index';
-import {NavigationService} from 'navigation/index';
-import {pathOr} from 'ramda';
+import {Task} from 'types';
+import {DeleteModal} from 'components';
+import {NavigationService} from 'navigation';
+
 type ItemViewProps = {
   item: Task;
   onPress: () => void;
@@ -23,9 +25,6 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
   const [visible, setVisible] = React.useState(false);
   const onClose = () => {
     setVisible(!visible);
-  };
-  const backdropStyle = {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   };
   return (
     <Container isCompleted={pathOr(false, ['isCompleted'], item)}>
@@ -49,7 +48,6 @@ const ItemView = ({item, onPress, theme}: ItemViewProps) => {
       <DeleteModal
         visible={visible}
         onClose={onClose}
-        backdropStyle={backdropStyle}
         onBackdropPress={onClose}
         task={item}
       />

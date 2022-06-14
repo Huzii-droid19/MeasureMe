@@ -1,8 +1,9 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {User, Task} from 'types/index';
 import {BASE_URL} from '@env';
-import {first, getCurrentUserId} from 'utils/index';
-import {store} from 'store/index';
+
+import {User, Task} from 'types';
+import {first, getCurrentUserId} from 'utils';
+import {store} from 'store';
 
 export const TodoApi = createApi({
   reducerPath: 'userApi',

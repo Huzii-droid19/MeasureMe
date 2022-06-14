@@ -4,6 +4,9 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {useTheme} from '@ui-kitten/components';
+import {useSelector} from 'react-redux';
+
 import {
   HomeScreen,
   RegisterScreen,
@@ -11,10 +14,8 @@ import {
   NewTaskScreen,
   EditTaskScreen,
 } from '../screens';
-import {useTheme} from '@ui-kitten/components';
 import {selectIsLoggedIn} from 'store/slice/authSlice';
-import {useSelector} from 'react-redux';
-import {RootStackParamsList} from 'types/index';
+import {RootStackParamsList} from 'types';
 
 const Stack = createNativeStackNavigator();
 export const NavigationService =
@@ -22,7 +23,6 @@ export const NavigationService =
 
 const Navigation = () => {
   const theme = useTheme();
-
   const options = {
     headerShown: true,
     title: '',

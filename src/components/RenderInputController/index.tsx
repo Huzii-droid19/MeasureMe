@@ -1,7 +1,8 @@
 import React, {ReactElement} from 'react';
 import {Controller} from 'react-hook-form';
-import {StyledInput, InputLabel} from './styles';
 import {ImageProps, StyleProp, TextStyle} from 'react-native';
+
+import {StyledInput} from './styles';
 
 type InputControllerProps = {
   name: string;

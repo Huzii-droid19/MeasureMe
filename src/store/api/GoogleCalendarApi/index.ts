@@ -1,6 +1,7 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import {CalendarApiParams} from 'types/index';
 import {GOOGEL_CALENDAR_BASE_URL} from '@env';
+
+import {CalendarApiParams} from 'types';
 
 export const CalendarApi = createApi({
   reducerPath: 'calendarApi',
@@ -8,7 +9,10 @@ export const CalendarApi = createApi({
     baseUrl: GOOGEL_CALENDAR_BASE_URL,
   }),
   endpoints: builder => ({
-    addTaskToGoogleCalendar: builder.mutation<any, CalendarApiParams>({
+    addTaskToGoogleCalendar: builder.mutation<
+      Record<string, any>,
+      CalendarApiParams
+    >({
       query: params => ({
         url: `calendars/primary/events?conferenceDataVersion=1`,
         method: 'POST',

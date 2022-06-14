@@ -1,7 +1,8 @@
-import {User} from 'types/index';
 import Toast from 'react-native-toast-message';
 import {ifElse, isEmpty, always, head, pathOr} from 'ramda';
 import {Linking} from 'react-native';
+
+import {User} from 'types';
 
 const firstOrEmpty = ifElse(isEmpty, always([]), head);
 

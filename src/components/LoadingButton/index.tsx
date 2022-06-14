@@ -1,6 +1,8 @@
 import React from 'react';
+import {ActivityIndicator} from 'react-native';
+import {useTheme} from '@ui-kitten/components';
+
 import {StyledButton} from './styles';
-import Loader from 'components/Loader';
 
 interface LoadingButtonProps {
   label: string;
@@ -23,19 +25,22 @@ const LoadingButton = ({
   size,
   width,
 }: LoadingButtonProps) => {
+  const theme = useTheme();
   return (
-    <>
-      {isLoading && <Loader />}
-      <StyledButton
-        width={width}
-        size={size}
-        disabled={disabled}
-        onPress={onPress}
-        status={status}
-        appearance={appearance}>
-        {label}
-      </StyledButton>
-    </>
+    <StyledButton
+      width={width}
+      size={size}
+      disabled={disabled}
+      onPress={onPress}
+      status={status}
+      accessoryLeft={
+        isLoading && (
+          <ActivityIndicator size="small" color={theme['color-primary-700']} />
+        )
+      }
+      appearance={appearance}>
+      {label}
+    </StyledButton>
   );
 };
 

@@ -1,22 +1,24 @@
 import React, {useLayoutEffect} from 'react';
-import {Container, Error, StyledIcon} from './styles';
 import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
+import {ImageProps, StyleSheet} from 'react-native';
+import {pathOr} from 'ramda';
+import moment from 'moment';
+import {useTheme} from '@ui-kitten/components';
+
+import {Container, Error, StyledIcon} from './styles';
 import {
   RenderInputController,
   RenderDateController,
   LoadingButton,
   MeetupButton,
   CheckBox,
-} from 'components/index';
-import {Todo, Calendar} from 'store/api/index';
-import {TaskForm} from 'types/index';
-import {ImageProps, StyleProp, StyleSheet, TextStyle} from 'react-native';
-import {useTheme} from '@ui-kitten/components';
-import {createEvent, createTask} from 'services/index';
-import {pathOr} from 'ramda';
+} from 'components';
+import {Todo, Calendar} from 'store/api';
+import {TaskForm} from 'types';
+import {createEvent, createTask} from 'services';
 
 const taskSchema = yup.object().shape({
   title: yup.string().required(),
@@ -44,7 +46,7 @@ const NewTask = ({navigation}) => {
     defaultValues: {
       title: '',
       description: '',
-      date: new Date(new Date().getTime() + 86400000),
+      date: moment().add(1, 'day').toDate(),
       isCompleted: false,
     },
     resolver: yupResolver(taskSchema),
@@ -54,7 +56,7 @@ const NewTask = ({navigation}) => {
   const onSubmit = async () => {
     const {isEventAdded, isMeetupAdded} = googleCalendarState;
     const {date, description, title, isCompleted} = getValues();
-    let data: any;
+    let data: Record<string, any> = {};
     if (isEventAdded) {
       data = await createEvent(
         title,

@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {FlatList, Animated, Dimensions} from 'react-native';
+import {Animated, Dimensions} from 'react-native';
 import {Icon, Layout, Button} from '@ui-kitten/components';
 import {Calendar} from 'react-native-calendars';
 
@@ -27,10 +27,17 @@ export const StyledIcon = styled(Icon)({
 export const TaskCalendar = styled(Calendar)({
   width: width,
 });
-export const TaskList = styled(FlatList)({
-  paddingTop: 10,
-  paddingBottom: 20,
-});
+export const TaskList = styled(Animated.FlatList).attrs(
+  ({isCalendarVisible}) => ({
+    style: {
+      paddingBottom: 30,
+    },
+    contentContainerStyle: {
+      paddingTop: 10,
+      paddingBottom: isCalendarVisible ? 0 : 300,
+    },
+  }),
+)``;
 export const FloatingButton = styled(Button)({
   alignSelf: 'flex-end',
   postion: 'absolute',

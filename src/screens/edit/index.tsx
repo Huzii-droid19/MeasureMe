@@ -1,5 +1,13 @@
 import React, {useLayoutEffect} from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import type {RouteProp, NavigationProp} from '@react-navigation/native';
+import {useTheme} from '@ui-kitten/components';
+import {ImageProps, StyleSheet} from 'react-native';
+import {pathOr} from 'ramda';
+
 import {Container, Error, InputContainer, StyledIcon} from './styles';
 import {
   RenderInputController,
@@ -7,21 +15,15 @@ import {
   LoadingButton,
   MeetupButton,
   CheckBox,
-} from 'components/index';
-import {useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import {TaskForm, Task} from 'types/index';
-import {RouteProp} from '@react-navigation/native';
-import {useTheme} from '@ui-kitten/components';
-import {Todo} from 'store/api/index';
-import {ImageProps, StyleSheet} from 'react-native';
-import {pathOr} from 'ramda';
+} from 'components';
+import {TaskForm, Task, RootStackParamsList} from 'types';
+import {Todo} from 'store/api';
+import {addToast} from 'utils';
 
-type EditScreenProps = {
+interface EditScreenProps {
   route: RouteProp<{params: {task: Task}}, 'params'>;
-  navigation: any;
-};
+  navigation: NavigationProp<RootStackParamsList>;
+}
 
 const EditTask = ({route, navigation}: EditScreenProps) => {
   const [editTask, {isLoading}] = Todo.useEditTaskMutation();
@@ -51,11 +53,11 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
         return value?.toDateString() !== new Date(task.date).toDateString();
       }),
   });
+
   const {
     control,
     setValue,
     getValues,
-    handleSubmit,
     formState: {errors, isValid},
     reset,
   } = useForm<TaskForm>({
@@ -63,17 +65,24 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
       title: pathOr('', ['title'], task),
       description: pathOr('', ['description'], task),
       date: new Date(pathOr('', ['date'], task)),
-      isCompleted: pathOr(false, ['isCompleted'], task),
     },
     resolver: yupResolver(taskSchema),
-    mode: 'all',
+    mode: 'onChange',
   }); // form intialization
 
   const onSubmit = async () => {
-    const {date, description, title} = getValues();
-    await editTask({...task, title, description, date});
-    navigation.goBack();
-    reset();
+    try {
+      const {date, description, title} = getValues();
+      const {error} = await editTask({...task, title, description, date});
+      if (error) {
+        throw new Error(error);
+      }
+    } catch (error: any) {
+      addToast(error.message, 'error');
+    } finally {
+      navigation.goBack();
+      reset();
+    }
   }; // function to call when user submit the form
 
   useLayoutEffect(() => {
@@ -82,7 +91,7 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
         <LoadingButton
           size="small"
           label="Edit Task"
-          onPress={handleSubmit(onSubmit)}
+          onPress={onSubmit}
           isLoading={isLoading}
           disabled={!isValid}
           status="primary"

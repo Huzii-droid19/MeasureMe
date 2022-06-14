@@ -1,5 +1,11 @@
 import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
+import {NavigationProp, RouteProp} from '@react-navigation/native';
+import {useTheme} from '@ui-kitten/components';
+import {pathOr} from 'ramda';
+import {StyleSheet} from 'react-native';
+import moment from 'moment';
+
 import {
   Container,
   Title,
@@ -10,33 +16,28 @@ import {
   JoinMeetingButton,
   Wrapper,
 } from './styles';
-import {RootStackParamsList, Task} from 'types/index';
-import {NavigationProp, RouteProp} from '@react-navigation/native';
-import moment from 'moment';
-import {DeleteModal, Loader} from 'components/index';
-import {useTheme} from '@ui-kitten/components';
-import {Todo} from 'store/api/index';
-import {addToast, navigateToURL} from 'utils/index';
-import {pathOr} from 'ramda';
-import {StyleSheet} from 'react-native';
+import {RootStackParamsList, Task} from 'types';
+import {DeleteModal, Loader} from 'components';
+import {Todo} from 'store/api';
+import {addToast, navigateToURL} from 'utils';
 
-type DetailsScreenProps = {
+interface DetailsScreenProps {
   route: RouteProp<{params: {task: Task}}, 'params'>;
   navigation: NavigationProp<RootStackParamsList>;
-};
+}
 
 const Details = ({navigation, route}: DetailsScreenProps) => {
   const [editTask, {isLoading}] = Todo.useEditTaskMutation();
   const {task}: {task: Task} = route.params;
   const [visible, setVisible] = React.useState(false);
   const theme = useTheme();
+
   const ScrollViewProps = StyleSheet.create({
     contentContainerStyle: {
       flexGrow: 1,
       backgroundColor: theme['background-basic-color-1'],
     },
   });
-
   const renderIcon = () => (
     <>
       <IconWrapper onPress={() => setVisible(!visible)}>
@@ -54,13 +55,12 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
     });
   }, [navigation]);
 
-  const backdropStyle = {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  };
-
-  const onStatusUpdate = async (status: boolean) => {
+  const onStatusUpdate = async () => {
     try {
-      const {data, error} = await editTask({...task, isCompleted: status});
+      const {data, error} = await editTask({
+        ...task,
+        isCompleted: !task.isCompleted,
+      });
       if (error) throw new Error(error);
       const updated_task = data as Task;
       addToast(
@@ -69,9 +69,10 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
           : `Task ${updated_task.title} reponed`,
         'success',
       );
-      navigation.goBack();
     } catch (error: any) {
       addToast(error.message, 'error');
+    } finally {
+      navigation.goBack();
     }
   };
 
@@ -89,8 +90,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       <Container>
         <Wrapper>
           <Title category="label">{pathOr('', ['title'], task)}</Title>
-          <IconWrapper
-            onPress={() => onStatusUpdate(!pathOr('', ['isCompleted'], task))}>
+          <IconWrapper onPress={onStatusUpdate}>
             <StyledIcon name="checkmark-circle-outline" fill={iconFillColor} />
           </IconWrapper>
         </Wrapper>
@@ -110,7 +110,6 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       <DeleteModal
         visible={visible}
         onClose={() => setVisible(!visible)}
-        backdropStyle={backdropStyle}
         onBackdropPress={() => setVisible(!visible)}
         task={task}
       />

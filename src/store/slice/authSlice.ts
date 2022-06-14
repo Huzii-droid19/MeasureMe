@@ -1,5 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {User} from 'types/index';
+import {pathOr} from 'ramda';
+
+import {User} from 'types';
 
 type AuthState = {
   isLoggedIn: boolean;
@@ -16,13 +18,15 @@ export const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     setAuthUser: (state, action: PayloadAction<AuthState>) => {
-      state.isLoggedIn = action.payload.isLoggedIn;
-      state.userMeta = action.payload.userMeta;
+      state.isLoggedIn = pathOr(false, ['payload', 'isLoggedIn'], action);
+      state.userMeta = pathOr(null, ['payload', 'userMeta'], action);
     },
   },
 });
 
 export const {setAuthUser} = authSlice.actions;
 export default authSlice.reducer;
-export const selectIsLoggedIn = state => state.auth.isLoggedIn;
-export const selectUserMeta = state => state.auth.userMeta;
+export const selectIsLoggedIn = state =>
+  pathOr(false, ['auth', 'isLoggedIn'], state);
+export const selectUserMeta = state =>
+  pathOr(null, ['auth', 'userMeta'], state);

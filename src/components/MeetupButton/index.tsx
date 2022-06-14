@@ -1,5 +1,6 @@
-import {useTheme} from '@ui-kitten/components';
 import React from 'react';
+import {useTheme} from '@ui-kitten/components';
+
 import {
   AddMeetupButton,
   IconContainer,
@@ -7,12 +8,11 @@ import {
   StyledIcon,
   StyledImageIcon,
 } from './styles';
+import {GoogleMeetIcon} from 'assets';
 interface Props {
   isMeetupAdded: boolean;
   setIsMeetUpAdded: (isMeetupAdded: boolean) => void;
 }
-const icon =
-  'https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png';
 
 const MeetupButton = ({isMeetupAdded, setIsMeetUpAdded}: Props) => {
   const [meetUpText, setMeetUpText] = React.useState(
@@ -26,16 +26,13 @@ const MeetupButton = ({isMeetupAdded, setIsMeetUpAdded}: Props) => {
     );
   };
 
-  const renderIcon = () =>
-    isMeetupAdded ? (
-      <StyledImageIcon source={{uri: icon}} />
-    ) : (
-      <StyledIcon name="video-off-outline" fill={theme['text-hint-color']} />
-    );
-
   return (
     <AddMeetupButton onPress={handleMeetup} disabled={isMeetupAdded}>
-      {renderIcon()}
+      {isMeetupAdded ? (
+        <StyledImageIcon source={GoogleMeetIcon} />
+      ) : (
+        <StyledIcon name="video-off-outline" fill={theme['text-hint-color']} />
+      )}
       <MeetLabel>{meetUpText}</MeetLabel>
       {isMeetupAdded && (
         <IconContainer onPress={handleMeetup}>
