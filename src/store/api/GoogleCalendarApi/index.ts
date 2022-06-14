@@ -7,6 +7,11 @@ export const CalendarApi = createApi({
   reducerPath: 'calendarApi',
   baseQuery: fetchBaseQuery({
     baseUrl: GOOGEL_CALENDAR_BASE_URL,
+    prepareHeaders: headers => {
+      headers.set('Content-Type', 'application/json');
+      headers.set('Accept', 'application/json');
+      return headers;
+    },
   }),
   endpoints: builder => ({
     addTaskToGoogleCalendar: builder.mutation<
@@ -14,13 +19,14 @@ export const CalendarApi = createApi({
       CalendarApiParams
     >({
       query: params => ({
-        url: `calendars/primary/events?conferenceDataVersion=1`,
+        url: `calendars/primary/events`,
         method: 'POST',
         body: params.task,
+        params: {
+          conferenceDataVersion: 1,
+        },
         headers: {
           Authorization: `Bearer ${params.accessToken}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
         },
       }),
     }),

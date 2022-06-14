@@ -2,7 +2,7 @@ import React from 'react';
 import {useTheme} from '@ui-kitten/components';
 import {Controller, UseFormGetValues, UseFormSetValue} from 'react-hook-form';
 import {Keyboard} from 'react-native';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import {TaskForm} from 'types';
 import {
@@ -38,6 +38,7 @@ const index = ({
     setValue('date', date, {shouldValidate: true});
     setOpen(false);
   };
+
   return (
     <Controller
       control={inputControl}
@@ -47,14 +48,14 @@ const index = ({
           <Label>{getValues('date').toDateString()}</Label>
           <StyledModal
             visible={open}
-            backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
+            backdropStyle={{backgroundColor: theme['backdrop-color']}}
             onBackdropPress={() => setOpen(!open)}>
             <StyledCard disabled={true}>
               <DateLabel>{getValues('date').toDateString()}</DateLabel>
               <StyledCalendar
                 date={getValues('date')}
                 onSelect={onSelect}
-                min={moment().add(1, 'day').toDate()}
+                min={dayjs().add(1, 'day').toDate()}
               />
             </StyledCard>
           </StyledModal>

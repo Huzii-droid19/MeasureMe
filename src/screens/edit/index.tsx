@@ -2,7 +2,6 @@ import React, {useLayoutEffect} from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import type {RouteProp, NavigationProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
 import {ImageProps, StyleSheet} from 'react-native';
@@ -19,6 +18,7 @@ import {
 import {TaskForm, Task, RootStackParamsList} from 'types';
 import {Todo} from 'store/api';
 import {addToast} from 'utils';
+import {editTaskSchema} from 'schemas';
 
 interface EditScreenProps {
   route: RouteProp<{params: {task: Task}}, 'params'>;
@@ -29,29 +29,15 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
   const [editTask, {isLoading}] = Todo.useEditTaskMutation();
   const {task}: {task: Task} = route.params;
   const theme = useTheme();
+  const title: string = pathOr('', ['title'], task);
+  const description: string = pathOr('', ['description'], task);
+  const deadline: Date = pathOr('', ['date'], task);
+  const isCompleted: boolean = pathOr(false, ['isCompleted'], task);
+  const eventId: string = pathOr('', ['eventId'], task);
+  const hangoutLink: string = pathOr('', ['hangoutLink'], task);
   const [googleCalendarState, setGoogleCalendarState] = React.useState({
-    isEventAdded: pathOr(false, ['eventId', 'length'], task) > 0,
-    isMeetupAdded: pathOr(false, ['hangoutLink', 'length'], task) > 0,
-  });
-  const taskSchema = yup.object().shape({
-    title: yup
-      .string()
-      .required()
-      .test('is-title', 'Title is not updated', value => {
-        return value !== task.title;
-      }),
-    description: yup
-      .string()
-      .required()
-      .test('is-description', 'Description is not updated', value => {
-        return value !== task.description;
-      }),
-    date: yup
-      .date()
-      .required()
-      .test('is-date', 'Date is not updated', value => {
-        return value?.toDateString() !== new Date(task.date).toDateString();
-      }),
+    isEventAdded: eventId.length > 0,
+    isMeetupAdded: hangoutLink.length > 0,
   });
 
   const {
@@ -62,12 +48,12 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
     reset,
   } = useForm<TaskForm>({
     defaultValues: {
-      title: pathOr('', ['title'], task),
-      description: pathOr('', ['description'], task),
-      date: new Date(pathOr('', ['date'], task)),
+      title: title,
+      description: description,
+      date: new Date(deadline),
     },
-    resolver: yupResolver(taskSchema),
-    mode: 'onChange',
+    resolver: yupResolver(editTaskSchema(task)),
+    mode: 'all',
   }); // form intialization
 
   const onSubmit = async () => {
@@ -107,20 +93,6 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
       isMeetupAdded: isMeetupAdded,
     });
   };
-
-  const textStyle = StyleSheet.create({
-    titleTextStyle: {
-      fontSize: 25,
-      fontWeight: '600',
-      minHeight: 64,
-      paddingLeft: 40,
-    },
-    descriptionTextStyle: {
-      fontSize: 16,
-      minHeight: 64,
-      fontWeight: '400',
-    },
-  });
 
   return (
     <ScreenWrapper
@@ -178,3 +150,17 @@ const EditTask = ({route, navigation}: EditScreenProps) => {
 };
 
 export default EditTask;
+
+const textStyle = StyleSheet.create({
+  titleTextStyle: {
+    fontSize: 25,
+    fontWeight: '600',
+    minHeight: 64,
+    paddingLeft: 40,
+  },
+  descriptionTextStyle: {
+    fontSize: 16,
+    minHeight: 64,
+    fontWeight: '400',
+  },
+});

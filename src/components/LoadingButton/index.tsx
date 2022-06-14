@@ -34,9 +34,7 @@ const LoadingButton = ({
       onPress={onPress}
       status={status}
       accessoryLeft={
-        isLoading && (
-          <ActivityIndicator size="small" color={theme['color-primary-700']} />
-        )
+        isLoading && <ActivityIndicator size="small" color={theme['white']} />
       }
       appearance={appearance}>
       {label}

@@ -1,11 +1,10 @@
 import React, {useLayoutEffect} from 'react';
 import {useForm} from 'react-hook-form';
-import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {ImageProps, StyleSheet} from 'react-native';
 import {pathOr} from 'ramda';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {useTheme} from '@ui-kitten/components';
 
 import {Container, Error, StyledIcon} from './styles';
@@ -19,18 +18,14 @@ import {
 import {Todo, Calendar} from 'store/api';
 import {TaskForm} from 'types';
 import {createEvent, createTask} from 'services';
-
-const taskSchema = yup.object().shape({
-  title: yup.string().required(),
-  description: yup.string().required(),
-  date: yup.date().required(),
-  isCompleted: yup.boolean(),
-});
+import {createTaskSchema} from 'schemas';
 
 const NewTask = ({navigation}) => {
   const theme = useTheme();
   const [addTask, {isLoading: taskLoader}] = Todo.useAddTaskMutation();
-  const [googleCalendarState, setGoogleCalendarState] = React.useState({
+  const [googleCalendarState, setGoogleCalendarState] = React.useState<
+    Record<string, boolean>
+  >({
     isEventAdded: false,
     isMeetupAdded: false,
   });
@@ -46,10 +41,10 @@ const NewTask = ({navigation}) => {
     defaultValues: {
       title: '',
       description: '',
-      date: moment().add(1, 'day').toDate(),
+      date: dayjs().add(1, 'day').toDate(),
       isCompleted: false,
     },
-    resolver: yupResolver(taskSchema),
+    resolver: yupResolver(createTaskSchema),
     mode: 'all',
   }); // form intialization
 
@@ -82,20 +77,6 @@ const NewTask = ({navigation}) => {
     reset();
     navigation.goBack();
   };
-
-  const textStyle = StyleSheet.create({
-    titleTextStyle: {
-      fontSize: 25,
-      fontWeight: '600',
-      minHeight: 64,
-      paddingLeft: 40,
-    },
-    descriptionTextStyle: {
-      fontSize: 16,
-      minHeight: 64,
-      fontWeight: '400',
-    },
-  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -174,3 +155,17 @@ const NewTask = ({navigation}) => {
 };
 
 export default NewTask;
+
+const textStyle = StyleSheet.create({
+  titleTextStyle: {
+    fontSize: 25,
+    fontWeight: '600',
+    minHeight: 64,
+    paddingLeft: 40,
+  },
+  descriptionTextStyle: {
+    fontSize: 16,
+    minHeight: 64,
+    fontWeight: '400',
+  },
+});

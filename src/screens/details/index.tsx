@@ -4,7 +4,7 @@ import {NavigationProp, RouteProp} from '@react-navigation/native';
 import {useTheme} from '@ui-kitten/components';
 import {pathOr} from 'ramda';
 import {StyleSheet} from 'react-native';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import {
   Container,
@@ -29,15 +29,14 @@ interface DetailsScreenProps {
 const Details = ({navigation, route}: DetailsScreenProps) => {
   const [editTask, {isLoading}] = Todo.useEditTaskMutation();
   const {task}: {task: Task} = route.params;
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = React.useState<boolean>(false);
   const theme = useTheme();
+  const title: string = pathOr('', ['title'], task);
+  const description: string = pathOr('', ['description'], task);
+  const deadline: Date = pathOr('', ['deadline'], task);
+  const hangoutLink: string = pathOr('', ['hangoutLink'], task);
+  const isCompleted: boolean = pathOr(false, ['isCompleted'], task);
 
-  const ScrollViewProps = StyleSheet.create({
-    contentContainerStyle: {
-      flexGrow: 1,
-      backgroundColor: theme['background-basic-color-1'],
-    },
-  });
   const renderIcon = () => (
     <>
       <IconWrapper onPress={() => setVisible(!visible)}>
@@ -59,7 +58,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
     try {
       const {data, error} = await editTask({
         ...task,
-        isCompleted: !task.isCompleted,
+        isCompleted: !isCompleted,
       });
       if (error) throw new Error(error);
       const updated_task = data as Task;
@@ -76,7 +75,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
     }
   };
 
-  const iconFillColor = task.isCompleted
+  const iconFillColor = isCompleted
     ? theme['color-primary-500']
     : theme['color-danger-500'];
 
@@ -85,22 +84,20 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       statusBarColor={theme['background-basic-color-1']}
       barStyle="dark-content"
       scrollType="scroll"
-      scrollViewProps={ScrollViewProps}>
+      scrollViewProps={ScrollViewProps({theme})}>
       {isLoading && <Loader />}
       <Container>
         <Wrapper>
-          <Title category="label">{pathOr('', ['title'], task)}</Title>
+          <Title category="label">{title}</Title>
           <IconWrapper onPress={onStatusUpdate}>
             <StyledIcon name="checkmark-circle-outline" fill={iconFillColor} />
           </IconWrapper>
         </Wrapper>
-        <Deadline>{`Due: ${moment(pathOr('', ['date'], task)).format(
-          'YYYY-MM-DD',
-        )}`}</Deadline>
-        <Description>{pathOr('', ['description'], task)}</Description>
-        {pathOr('', ['hangoutLink', 'length'], task) > 0 && (
+        <Deadline>{`Due: ${dayjs(deadline).format('yyyy-MM-dd')}`}</Deadline>
+        <Description>{description}</Description>
+        {hangoutLink.length && (
           <JoinMeetingButton
-            onPress={() => navigateToURL(pathOr('', ['hangoutLink'], task))}
+            onPress={() => navigateToURL(hangoutLink)}
             appearance="filled"
             status="success">
             Join Meeting
@@ -118,3 +115,11 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
 };
 
 export default Details;
+
+const ScrollViewProps = ({theme}) =>
+  StyleSheet.create({
+    contentContainerStyle: {
+      flexGrow: 1,
+      backgroundColor: theme['background-basic-color-1'],
+    },
+  });

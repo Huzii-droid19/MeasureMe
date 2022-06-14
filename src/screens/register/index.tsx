@@ -2,7 +2,6 @@ import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {getUniqueId} from 'react-native-device-info';
 import {useForm} from 'react-hook-form';
-import * as yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {StyleSheet} from 'react-native';
 import {useDispatch} from 'react-redux';
@@ -22,14 +21,7 @@ import {RegisterForm, User} from 'types';
 import {setAuthUser} from 'store/slice/authSlice';
 import {AuthenticationIllustration} from 'assets';
 import {addToast} from 'utils';
-
-const registerSchema = yup.object().shape({
-  email: yup.string().email().required(),
-  name: yup
-    .string()
-    .required()
-    .matches(/^[a-zA-Z]+$/, 'Only letters are allowed'),
-});
+import {registerSchema} from 'schemas';
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -45,7 +37,7 @@ const Register = () => {
       name: '',
     },
     resolver: yupResolver(registerSchema),
-    mode: 'onChange',
+    mode: 'all',
   }); // form intialization
   const [addUser, {isLoading}] = Todo.useAddUserMutation(); // add user mutation
 
@@ -67,38 +59,17 @@ const Register = () => {
     }
   }; // function to call when user submit the form
 
-  const styles = StyleSheet.create({
-    textStyle: {
-      fontSize: 16,
-      minHeight: 40,
-      fontWeight: '400',
-    },
-    illustrationStyle: {
-      marginVertical: 100,
-    },
-    ScrollViewStyle: {
-      flexGrow: 1,
-      backgroundColor: theme['background-basic-color-1'],
-    },
-  });
-
-  const ScrollViewProps = StyleSheet.create({
-    style: {
-      backgroundColor: theme['background-basic-color-1'],
-    },
-  });
-
   return (
     <ScreenWrapper
       scrollType="keyboard"
       barStyle="dark-content"
-      scrollViewProps={ScrollViewProps}
+      scrollViewProps={ScrollViewProps({theme})}
       statusBarColor={theme['background-basic-color-1']}>
       <Container>
         <AuthenticationIllustration
           height={100}
           width={100}
-          style={styles.illustrationStyle}
+          style={styles({theme}).illustrationStyle}
         />
         <Label category="label">Register</Label>
         <InputContainer>
@@ -106,14 +77,14 @@ const Register = () => {
             name="Name"
             inputControl={control}
             placeholder="Your name"
-            textStyle={styles.textStyle}
+            textStyle={styles({theme}).textStyle}
           />
           <Error>{pathOr('', ['name', 'message'], errors)}</Error>
           <RenderInputController
             name="Email"
             inputControl={control}
             placeholder="Your email"
-            textStyle={styles.textStyle}
+            textStyle={styles({theme}).textStyle}
           />
           <Error>{pathOr('', ['email', 'message'], errors)}</Error>
         </InputContainer>
@@ -135,3 +106,26 @@ const Register = () => {
 };
 
 export default Register;
+
+const ScrollViewProps = ({theme}) =>
+  StyleSheet.create({
+    style: {
+      backgroundColor: theme['background-basic-color-1'],
+    },
+  });
+
+const styles = ({theme}) =>
+  StyleSheet.create({
+    textStyle: {
+      fontSize: 16,
+      minHeight: 40,
+      fontWeight: '400',
+    },
+    illustrationStyle: {
+      marginVertical: 100,
+    },
+    ScrollViewStyle: {
+      flexGrow: 1,
+      backgroundColor: theme['background-basic-color-1'],
+    },
+  });

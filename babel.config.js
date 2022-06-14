@@ -17,6 +17,7 @@ module.exports = {
           types: './src/types',
           utils: './src/utils',
           services: './src/services',
+          schemas: './src/schemas',
         },
       },
     ],

@@ -4,7 +4,7 @@ import {ScreenWrapper} from 'react-native-screen-wrapper';
 import {useTheme} from '@ui-kitten/components';
 import {DateData} from 'react-native-calendars';
 import {pathOr} from 'ramda';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import {Todo} from 'store/api';
 import {
@@ -20,17 +20,17 @@ import {Task} from 'types';
 import {NavigationService} from 'navigation';
 
 const Home = () => {
-  const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
+  const [currentDate, setCurrentDate] = useState(dayjs().format('YYYY-MM-DD'));
   const {data: tasks, isLoading, refetch} = Todo.useGetTasksQuery();
-  const [filteredData, setFilteredData] = useState(tasks);
-  const [isCalendarVisible, setIsCalendarVisible] = useState(true);
+  const [filteredData, setFilteredData] = useState<Task[]>(tasks);
+  const [isCalendarVisible, setIsCalendarVisible] = useState<boolean>(true);
   const CalendarAnimatedValue = useRef(new Animated.Value(-500)).current;
   const ListAnimatedValue = useRef(new Animated.Value(0)).current;
   const theme = useTheme();
   const markDates = {} as any;
 
   tasks?.forEach((task: Task) => {
-    markDates[moment(task.date).format('YYYY-MM-DD')] = {
+    markDates[dayjs(task.date).format('YYYY-MM-DD')] = {
       marked: true,
       dotColor: pathOr(false, ['isCompleted'], task)
         ? theme['color-primary-700']
@@ -70,7 +70,7 @@ const Home = () => {
     // call when swipe down to refresh
     refetch();
     setFilteredData(tasks);
-    setCurrentDate(moment(new Date()).format('YYYY-MM-DD'));
+    setCurrentDate(dayjs().format('YYYY-MM-DD'));
   }, [tasks]);
 
   const onDayPress = (day: DateData) => {
