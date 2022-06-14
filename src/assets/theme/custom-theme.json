@@ -44,5 +44,6 @@
   "color-danger-700": "#8D0907",
   "color-danger-800": "#71040B",
   "color-danger-900": "#5E020F",
-  "color-header": "#F4F6FF"
+  "color-header": "#F4F6FF",
+  "backdrop-color": "#00000080"
 }

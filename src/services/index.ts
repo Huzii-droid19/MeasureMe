@@ -1,6 +1,7 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {GOOGLE_CLIENT_ID} from '@env';
-import {addToast} from 'utils/index';
+
+import {addToast} from 'utils';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID, // this is web client id (Not Android)

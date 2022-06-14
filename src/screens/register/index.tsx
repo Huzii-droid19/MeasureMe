@@ -1,5 +1,14 @@
 import React from 'react';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
+import {getUniqueId} from 'react-native-device-info';
+import {useForm} from 'react-hook-form';
+import * as yup from 'yup';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {StyleSheet} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {pathOr} from 'ramda';
+import {useTheme} from '@ui-kitten/components';
+
 import {
   Container,
   Label,
@@ -7,20 +16,12 @@ import {
   Error,
   ButtonContainer,
 } from './styles';
-import {Todo} from 'store/api/index';
-import {getUniqueId} from 'react-native-device-info';
-import {useForm} from 'react-hook-form';
-import * as yup from 'yup';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {LoadingButton, RenderInputController} from 'components/index';
-import {RegisterForm, User} from 'types/index';
+import {Todo} from 'store/api';
+import {LoadingButton, RenderInputController} from 'components';
+import {RegisterForm, User} from 'types';
 import {setAuthUser} from 'store/slice/authSlice';
-import {useDispatch} from 'react-redux';
-import {useTheme} from '@ui-kitten/components';
-import {StyleProp, StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {AuthenticationIllustration} from 'assets/index';
-import {addToast} from 'utils/index';
-import {pathOr} from 'ramda';
+import {AuthenticationIllustration} from 'assets';
+import {addToast} from 'utils';
 
 const registerSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -31,8 +32,8 @@ const registerSchema = yup.object().shape({
 });
 
 const Register = () => {
-  const {useAddUserMutation} = Todo;
   const dispatch = useDispatch();
+  const theme = useTheme();
   const {
     control,
     handleSubmit,
@@ -46,15 +47,14 @@ const Register = () => {
     resolver: yupResolver(registerSchema),
     mode: 'onChange',
   }); // form intialization
-  const [addUser, {isLoading}] = useAddUserMutation(); // add user mutation
+  const [addUser, {isLoading}] = Todo.useAddUserMutation(); // add user mutation
 
   const onSubmit = async ({name, email}: RegisterForm) => {
     try {
-      const deviceId = getUniqueId();
       const {data, error} = await addUser({
         name: name,
         email: email,
-        DeviceId: deviceId,
+        DeviceId: getUniqueId(),
       });
       if (error) {
         throw new Error(error);
@@ -66,7 +66,7 @@ const Register = () => {
       reset();
     }
   }; // function to call when user submit the form
-  const theme = useTheme();
+
   const styles = StyleSheet.create({
     textStyle: {
       fontSize: 16,
@@ -83,8 +83,7 @@ const Register = () => {
   });
 
   const ScrollViewProps = StyleSheet.create({
-    contentContainerStyle: {
-      flexGrow: 1,
+    style: {
       backgroundColor: theme['background-basic-color-1'],
     },
   });
@@ -97,8 +96,8 @@ const Register = () => {
       statusBarColor={theme['background-basic-color-1']}>
       <Container>
         <AuthenticationIllustration
-          height={150}
-          width={150}
+          height={100}
+          width={100}
           style={styles.illustrationStyle}
         />
         <Label category="label">Register</Label>

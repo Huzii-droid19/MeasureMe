@@ -1,13 +1,14 @@
 import React from 'react';
-import {StyledModal} from './styles';
 import {ActivityIndicator} from 'react-native';
 import {useTheme} from '@ui-kitten/components';
+
+import {StyledModal} from './styles';
 
 const Loader = () => {
   const theme = useTheme();
   return (
     <StyledModal
-      backdropStyle={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
+      backdropStyle={{backgroundColor: theme['backdrop-color']}}
       visible={true}>
       <ActivityIndicator
         animating={true}

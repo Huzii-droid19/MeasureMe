@@ -8,3 +8,4 @@ export {default as DeleteModal} from './DeleteModal';
 export {default as Header} from './Header';
 export {default as MeetupButton} from './MeetupButton';
 export {default as CheckBox} from './CheckBox';
+export {default as Searchbar} from './Searchbar';

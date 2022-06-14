@@ -1,8 +1,10 @@
-import {useTheme} from '@ui-kitten/components';
 import React from 'react';
+import {useTheme} from '@ui-kitten/components';
 import {Controller, UseFormGetValues, UseFormSetValue} from 'react-hook-form';
 import {Keyboard} from 'react-native';
-import {TaskForm} from 'types/index';
+import moment from 'moment';
+
+import {TaskForm} from 'types';
 import {
   StyledModal,
   StyledCard,
@@ -39,7 +41,7 @@ const index = ({
   return (
     <Controller
       control={inputControl}
-      render={({field: {onBlur}}) => (
+      render={() => (
         <Container onPress={handleOpenModal}>
           <StyledIcon name="calendar" fill={theme['text-hint-color']} />
           <Label>{getValues('date').toDateString()}</Label>
@@ -52,7 +54,7 @@ const index = ({
               <StyledCalendar
                 date={getValues('date')}
                 onSelect={onSelect}
-                min={new Date(new Date().getTime() + 86400000)}
+                min={moment().add(1, 'day').toDate()}
               />
             </StyledCard>
           </StyledModal>

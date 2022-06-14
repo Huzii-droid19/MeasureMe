@@ -1,11 +1,11 @@
 import React from 'react';
-import {CheckBoxLabel, StyledCheckBox} from './styles';
 
-type Props = {
+import {CheckBoxLabel, StyledCheckBox} from './styles';
+interface Props {
   label: string;
   value: boolean;
   onChange: (value: boolean) => void;
-};
+}
 
 const CheckBox = ({label, onChange, value}: Props) => {
   return (

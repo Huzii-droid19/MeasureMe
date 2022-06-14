@@ -1,33 +1,33 @@
 import React, {useEffect, useState} from 'react';
-import {Provider} from 'react-redux';
-import {store} from 'store/index';
-import Navigation from 'navigation/index';
+import {Provider, useDispatch} from 'react-redux';
 import SplashScreen from 'react-native-splash-screen';
-import {Todo} from 'store/api/index';
 import {getUniqueId} from 'react-native-device-info';
-import {Appearance} from 'react-native';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
-import {Loader} from 'components/index';
-import {CustomTheme} from 'assets/index';
 import Toast from 'react-native-toast-message';
 import {ThemeProvider} from 'styled-components';
-import {setAuthUser} from 'store/slice/authSlice';
-import {useDispatch} from 'react-redux';
 import {isEmpty} from 'ramda';
 
+import {store} from 'store';
+import Navigation from 'navigation';
+import {Todo} from 'store/api';
+import {Appearance} from 'react-native';
+import {Loader} from 'components';
+import {CustomTheme} from 'assets';
+import {setAuthUser} from 'store/slice/authSlice';
+
 const Index = () => {
-  const {useGetUserByDeviceIdQuery} = Todo;
-  const {isSuccess, isLoading, data} = useGetUserByDeviceIdQuery(getUniqueId());
+  const {isSuccess, isLoading, data} = Todo.useGetUserByDeviceIdQuery(
+    getUniqueId(),
+  );
   const dispatch = useDispatch();
   useEffect(() => {
-    if (isSuccess && !isEmpty(data)) {
+    if (isSuccess && !isEmpty(data))
       dispatch(setAuthUser({isLoggedIn: true, userMeta: data}));
-    }
     SplashScreen.hide();
   }, [isSuccess]);
-  return <>{isLoading ? <Loader /> : <Navigation />}</>;
+  return isLoading ? <Loader /> : <Navigation />;
 };
 
 const App = () => {

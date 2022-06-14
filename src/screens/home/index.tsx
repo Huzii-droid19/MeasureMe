@@ -1,7 +1,12 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Animated, RefreshControl} from 'react-native';
 import {ScreenWrapper} from 'react-native-screen-wrapper';
-import {Todo} from 'store/api/index';
+import {useTheme} from '@ui-kitten/components';
+import {DateData} from 'react-native-calendars';
+import {pathOr} from 'ramda';
+import moment from 'moment';
+
+import {Todo} from 'store/api';
 import {
   Container,
   CalendarView,
@@ -10,24 +15,21 @@ import {
   TaskList,
   FloatingButton,
 } from './styles';
-import {TaskView, EmptyListComponent, Header} from 'components/index';
-import {Task} from 'types/index';
-import {useTheme} from '@ui-kitten/components';
-import moment from 'moment';
-import {DateData} from 'react-native-calendars';
-import {NavigationService} from 'navigation/index';
-import {pathOr} from 'ramda';
+import {TaskView, EmptyListComponent, Header} from 'components';
+import {Task} from 'types';
+import {NavigationService} from 'navigation';
 
 const Home = () => {
-  const {useGetTasksQuery} = Todo;
   const [currentDate, setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
-  const {data: tasks, isLoading, refetch} = useGetTasksQuery();
+  const {data: tasks, isLoading, refetch} = Todo.useGetTasksQuery();
   const [filteredData, setFilteredData] = useState(tasks);
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
   const [search, setSearch] = useState('');
   const CalendarAnimatedValue = useRef(new Animated.Value(-500)).current;
+  const ListAnimatedValue = useRef(new Animated.Value(0)).current;
   const theme = useTheme();
   const markDates = {} as any;
+
   tasks?.forEach((task: Task) => {
     markDates[moment(task.date).format('YYYY-MM-DD')] = {
       marked: true,
@@ -36,16 +38,23 @@ const Home = () => {
         : theme['color-danger-700'],
     };
   });
-  const ViewProps = {
-    transform: [{translateY: CalendarAnimatedValue}],
-  };
+
   const animateCalendar = () => {
     setIsCalendarVisible(!isCalendarVisible);
-    Animated.timing(CalendarAnimatedValue, {
-      toValue: isCalendarVisible ? 80 : -500,
-      duration: 600,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(CalendarAnimatedValue, {
+        toValue: isCalendarVisible ? 80 : -500,
+        duration: 300,
+        delay: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(ListAnimatedValue, {
+        toValue: isCalendarVisible ? 300 : 0,
+        duration: 300,
+
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
   const renderItemCall = ({item}: {item: Task}) => {
     return (
@@ -57,6 +66,7 @@ const Home = () => {
     );
   };
   const renderEmptyList = () => <EmptyListComponent />;
+
   const onSearch = (text: string) => {
     //call when text type in searchbar
     setFilteredData(
@@ -95,36 +105,40 @@ const Home = () => {
       statusBarColor={theme['color-header']}
       barStyle="dark-content">
       <Container>
-        <>
-          <Header
-            currentDate={currentDate}
-            calendarHandler={animateCalendar}
-            search={search}
-            onSearch={onSearch}
+        <Header
+          currentDate={currentDate}
+          calendarHandler={animateCalendar}
+          isCalendarVisible={isCalendarVisible}
+          data={tasks}
+          setData={setFilteredData}
+        />
+        <CalendarView
+          style={{transform: [{translateY: CalendarAnimatedValue}]}}>
+          <TaskCalendar
+            enableSwipeMonths
+            current={currentDate}
+            onDayPress={onDayPress}
+            markedDates={{
+              ...markDates,
+              [currentDate]: {
+                selected: true,
+              },
+            }}
+            theme={{calendarBackground: theme['color-header']}}
           />
-          <CalendarView style={ViewProps}>
-            <TaskCalendar
-              enableSwipeMonths={true}
-              current={currentDate}
-              onDayPress={onDayPress}
-              markedDates={{
-                ...markDates,
-                [currentDate]: {
-                  selected: true,
-                },
-              }}
-              theme={{calendarBackground: theme['color-header']}}
-            />
-          </CalendarView>
-        </>
+        </CalendarView>
         <TaskList
+          style={{
+            transform: [{translateY: ListAnimatedValue}],
+          }}
+          isCalendarVisible={isCalendarVisible}
           data={filteredData}
           renderItem={renderItemCall}
           keyExtractor={(item: Task) => pathOr('', ['id'], item).toString()}
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
           }
-          ListEmptyComponent={!isLoading && renderEmptyList}
+          ListEmptyComponent={renderEmptyList}
         />
         <FloatingButton
           onPress={() => NavigationService.navigate('NewTask')}
