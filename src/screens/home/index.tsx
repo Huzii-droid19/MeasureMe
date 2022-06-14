@@ -24,7 +24,6 @@ const Home = () => {
   const {data: tasks, isLoading, refetch} = Todo.useGetTasksQuery();
   const [filteredData, setFilteredData] = useState(tasks);
   const [isCalendarVisible, setIsCalendarVisible] = useState(true);
-  const [search, setSearch] = useState('');
   const CalendarAnimatedValue = useRef(new Animated.Value(-500)).current;
   const ListAnimatedValue = useRef(new Animated.Value(0)).current;
   const theme = useTheme();
@@ -44,18 +43,18 @@ const Home = () => {
     Animated.parallel([
       Animated.timing(CalendarAnimatedValue, {
         toValue: isCalendarVisible ? 80 : -500,
-        duration: 300,
-        delay: 100,
+        duration: 500,
         useNativeDriver: true,
       }),
       Animated.timing(ListAnimatedValue, {
         toValue: isCalendarVisible ? 300 : 0,
-        duration: 300,
-
+        duration: 500,
+        delay: 50,
         useNativeDriver: true,
       }),
     ]).start();
   };
+
   const renderItemCall = ({item}: {item: Task}) => {
     return (
       <TaskView
@@ -67,18 +66,6 @@ const Home = () => {
   };
   const renderEmptyList = () => <EmptyListComponent />;
 
-  const onSearch = (text: string) => {
-    //call when text type in searchbar
-    setFilteredData(
-      tasks?.filter(
-        (item: Task) =>
-          pathOr('', ['title'], item)
-            .toLowerCase()
-            .indexOf(text.toLowerCase()) > -1,
-      ),
-    );
-    setSearch(text);
-  };
   const onRefresh = useCallback(() => {
     // call when swipe down to refresh
     refetch();
